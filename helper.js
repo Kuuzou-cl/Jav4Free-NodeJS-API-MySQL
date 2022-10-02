@@ -6,14 +6,14 @@ function getCountPages(currentPage = 1, listPerPage, totalRows){
   var nextPage;
   var lastPage;
   if (currentPage * listPerPage < totalRows) {
-    nextPage = currentPage + 1;
+    nextPage = Number(currentPage) + 1;
   }else{
-    nextPage = currentPage;
+    nextPage = Number(currentPage);
   };
   if (totalRows % listPerPage == 0 ) {
     lastPage = totalRows / listPerPage;
   }else{
-    lastPage = totalRows / listPerPage + 1;
+    lastPage = totalRows / listPerPage + 1 - totalRows % listPerPage;
   }
   return ({nextPage, lastPage});
 }
