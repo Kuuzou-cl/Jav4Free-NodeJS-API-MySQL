@@ -47,11 +47,14 @@ async function getJav(code = 'AAA-000') {
     const rowsScenes = await db.query(
         `SELECT * FROM Scene s join JavScene js on js.sceneId = s.id where js.javId = (SELECT id FROM Jav j where j.code = '${code}')`
     );
+    const rowsIdols = await db.query(
+        `SELECT * from Idol i join JavIdol ji on ji.idolId = i.id WHERE ji.javId = (SELECT id FROM Jav j where j.code = '${code}')`
+    );
     const data = {
         Jav : helper.emptyOrRows(rowsJav),
         Categories : helper.emptyOrRows(rowsCategories),
-        Scenes : helper.emptyOrRows(rowsScenes)
-
+        Scenes : helper.emptyOrRows(rowsScenes),
+        Idols : helper.emptyOrRows(rowsIdols)
     };
     return{
         data
