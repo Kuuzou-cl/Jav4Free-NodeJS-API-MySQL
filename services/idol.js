@@ -23,7 +23,7 @@ async function getFeatured(limit = 1) {
     const rows = await db.query(
         `SELECT * FROM Idol order by RAND() LIMIT 0,${limit}`
     );
-    const data = helper.emptyOrRows(rows);
+    const data = {Idols: helper.emptyOrRows(rows)};
     return{
         data
     }
