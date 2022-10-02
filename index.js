@@ -5,6 +5,9 @@ const javsRouter = require("./routes/javs");
 const scenesRouter = require("./routes/scenes");
 const idolsRouter = require("./routes/idols");
 const categoriesRouter = require("./routes/categories");
+const cors = require('cors');
+
+const config = require('./config');
 
 app.use(express.json());
 app.use(
@@ -12,6 +15,10 @@ app.use(
     extended: true,
   })
 );
+
+app.use(cors(
+  config.cors.server
+));
 
 app.get("/", (req, res) => {
   res.json({ message: "ok" });

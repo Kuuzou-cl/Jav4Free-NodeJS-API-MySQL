@@ -7,6 +7,11 @@ const config = {
         password : 'Waflek977kuu!',
         database : 'jav4free'
     },
+    cors: {
+      server : [
+        {origin : "*", credentials : true}
+      ]
+    },
     listPerPageJavs: 10,
     listPerPageScenes: 20,
     listPerPageIdols: 18
