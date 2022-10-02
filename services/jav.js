@@ -10,8 +10,12 @@ async function getMultiple(page = 1, order = 'desc') {
     const rows = await db.query(
         `SELECT * FROM Jav order by id ${order} LIMIT ${offset},${config.listPerPageJavs}`
     );
+    const maxRows = await db.query(
+        `SELECT * FROM Jav`
+    );
+    const pagesData = helper.getCountPages(page,config.listPerPageJavs,maxRows.length);
     const data = { Javs : helper.emptyOrRows(rows) };
-    const meta = { page };
+    const meta = { page : page, nextPage: pagesData.nextPage, lastPage: pagesData.lastPage };
 
     return {
         data,
