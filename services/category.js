@@ -22,7 +22,7 @@ async function getScenes(page = 1, name = '', order = 'desc') {
         `SELECT * from Scene s join SceneCategory sc on s.id = sc.sceneId where sc.categoryId = (SELECT c.id from Category c WHERE c.name = '${name}') order by s.creation ${order} LIMIT ${offset},${config.listPerPageScenes}`
     );
     const data = {Scenes : helper.emptyOrRows(rows)};
-    const meta = { page };
+    const meta = { page : page, total: rows.length };
 
     return {
         data,
