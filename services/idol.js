@@ -3,12 +3,12 @@ const helper = require('../helper');
 const config = require('../config');
 
 async function getMultiple(page = 1, order = 'desc') {
-    const offset = helper.getOffset(page, config.listPerPageJavs);
+    const offset = helper.getOffset(page, config.listPerPageIdols);
     if (order != 'desc' && order != 'asc') {
         order = 'desc'
     }
     const rows = await db.query(
-        `SELECT * FROM Idol order by id ${order} LIMIT ${offset},${config.listPerPageJavs}`
+        `SELECT * FROM Idol order by id ${order} LIMIT ${offset},${config.listPerPageIdols}`
     );
     const maxRows = await db.query(
         `SELECT * FROM Idol`
