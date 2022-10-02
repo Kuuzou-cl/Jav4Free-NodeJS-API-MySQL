@@ -14,7 +14,7 @@ async function getMultiple(page = 1, order = 'desc') {
         `SELECT * FROM Idol`
     );
     const pagesData = helper.getCountPages(page,config.listPerPageIdols,maxRows.length);
-    const data = helper.emptyOrRows(rows);
+    const data = {Idols:helper.emptyOrRows(rows)};
     const meta = { page : page, nextPage: pagesData.nextPage, lastPage: pagesData.lastPage };
 
     return {
