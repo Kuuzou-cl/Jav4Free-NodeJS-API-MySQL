@@ -20,8 +20,12 @@ async function getMultiple(page = 1, order = 'desc') {
     const rows = await db.query(
         `SELECT * FROM Scene order by id ${order} LIMIT ${offset},${config.listPerPageScenes}`
     );
+    const maxRows = await db.query(
+        `SELECT * FROM Scene`
+    );
+    const pagesData = helper.getCountPages(page,config.listPerPageScenes,maxRows.length);
     const data = {Scenes : helper.emptyOrRows(rows)};
-    const meta = { page };
+    const meta = { page : page, nextPage: pagesData.nextPage, lastPage: pagesData.lastPage };
 
     return {
         data,
