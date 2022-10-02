@@ -12,7 +12,7 @@ const config = {
         {origin : "*", credentials : true}
       ]
     },
-    listPerPageJavs: 10,
+    listPerPageJavs: 12,
     listPerPageScenes: 20,
     listPerPageIdols: 18
   };
