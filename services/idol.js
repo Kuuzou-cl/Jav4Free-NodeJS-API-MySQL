@@ -41,8 +41,19 @@ async function getScenes(page = 1, name = '', order = 'desc') {
     const rows = await db.query(
         `SELECT * FROM Scene s join SceneIdol si on s.id = si.sceneId where si.idolId = (SELECT id FROM Idol i where i.name = '${name}') order by s.creation ${order} LIMIT ${offset},${config.listPerPageScenes}`
     );
-    const data = helper.emptyOrRows(rows);
-    const meta = { page };
+    const rows2 = await db.query(
+        `SELECT * FROM Idol i where i.name = '${name}'`
+    );
+    const data = {
+        Idol: helper.emptyOrRows(rows2),
+        Scenes :helper.emptyOrRows(rows)
+    };
+
+    const maxRows = await db.query(
+        `SELECT * FROM Scene s join SceneIdol si on s.id = si.sceneId where si.idolId = (SELECT id FROM Idol i where i.name = '${name}')`
+    );
+    const pagesData = helper.getCountPages(page,config.listPerPageScenes,maxRows.length);
+    const meta = { page : page, nextPage: pagesData.nextPage, lastPage: pagesData.lastPage };
 
     return {
         data,
