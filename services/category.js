@@ -21,8 +21,9 @@ async function getScenes(page = 1, name = '', order = 'desc') {
     const rows = await db.query(
         `SELECT * from Scene s join SceneCategory sc on s.id = sc.sceneId where sc.categoryId = (SELECT c.id from Category c WHERE c.name = '${name}') order by s.creation ${order} LIMIT ${offset},${config.listPerPageScenes}`
     );
+    const pagesData = helper.getCountPages(page,config.listPerPageScenes,rows.length);
     const data = {Scenes : helper.emptyOrRows(rows)};
-    const meta = { page : page, total: rows.length };
+    const meta = { page : page, total: pagesData };
 
     return {
         data,
