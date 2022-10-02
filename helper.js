@@ -13,7 +13,7 @@ function getCountPages(currentPage = 1, listPerPage, totalRows){
   if (totalRows % listPerPage == 0 ) {
     lastPage = totalRows / listPerPage;
   }else{
-    lastPage = totalRows / listPerPage + 1 - totalRows % listPerPage;
+    lastPage = ((totalRows / listPerPage) - (totalRows % listPerPage)) + 1;
   }
   return ({nextPage, lastPage});
 }
