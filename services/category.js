@@ -26,7 +26,7 @@ async function getScenes(page = 1, name = '', order = 'desc') {
     );
     const pagesData = helper.getCountPages(page,config.listPerPageScenes,maxRows.length);
     const data = {Scenes : helper.emptyOrRows(rows)};
-    const meta = { page : page, total: pagesData };
+    const meta = { page : page, nextPage: pagesData.nextPage, lastPage: pagesData.lastPage };
 
     return {
         data,
