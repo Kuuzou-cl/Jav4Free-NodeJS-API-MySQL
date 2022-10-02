@@ -22,9 +22,9 @@ async function getScenes(page = 1, name = '', order = 'desc') {
         `SELECT * from Scene s join SceneCategory sc on s.id = sc.sceneId where sc.categoryId = (SELECT c.id from Category c WHERE c.name = '${name}') order by s.creation ${order} LIMIT ${offset},${config.listPerPageScenes}`
     );
     const maxRows = await db.query(
-        `SELECT count(*) from Scene s join SceneCategory sc on s.id = sc.sceneId where sc.categoryId = (SELECT c.id from Category c WHERE c.name = '${name}')`
+        `SELECT * from Scene s join SceneCategory sc on s.id = sc.sceneId where sc.categoryId = (SELECT c.id from Category c WHERE c.name = '${name}')`
     );
-    const pagesData = helper.getCountPages(page,config.listPerPageScenes,maxRows);
+    const pagesData = helper.getCountPages(page,config.listPerPageScenes,maxRows.length);
     const data = {Scenes : helper.emptyOrRows(rows)};
     const meta = { page : page, total: pagesData };
 
