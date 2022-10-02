@@ -6,7 +6,7 @@ async function getAll() {
     const rows = await db.query(
         `SELECT * FROM Category order by name`
     );
-    const data = helper.emptyOrRows(rows);
+    const data = { Categories : helper.emptyOrRows(rows) };
 
     return {
         data
