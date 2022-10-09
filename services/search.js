@@ -19,7 +19,7 @@ async function getSearch(title) {
     
 
     /* Search per word */
-    var stringIdCategories = 'SELECT * from Scene s join SceneCategory sc on s.id = sc.sceneId where sc.categoryId in (0';
+    var stringIdCategories = 'SELECT s.od, s.title, s.code, s.video, s.duration, s.hide, s.previewImage, s.staticImage, s.creation, s.vtt, s.video480p from Scene s join SceneCategory sc on s.id = sc.sceneId where sc.categoryId in (0';
     const tempAllRowsCategories = await db.query(`select * from Category`);
     words.forEach(word => {
         tempAllRowsCategories.forEach(tempCategory => {
@@ -30,7 +30,7 @@ async function getSearch(title) {
     });
     stringIdCategories = stringIdCategories.concat('',')');
 
-    var stringIdIdols = 'SELECT * FROM Scene s join SceneIdol si on s.id = si.sceneId WHERE si.idolId in (0';
+    var stringIdIdols = 'SELECT s.od, s.title, s.code, s.video, s.duration, s.hide, s.previewImage, s.staticImage, s.creation, s.vtt, s.video480p FROM Scene s join SceneIdol si on s.id = si.sceneId WHERE si.idolId in (0';
     const tempAllRowsIdols = await db.query(`select * from Idol`);
     words.forEach(word => {
         tempAllRowsIdols.forEach(tempIdol => {
