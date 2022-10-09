@@ -17,9 +17,14 @@ async function getSearch(title) {
     /* Categories search */
     var stringCategories;
     var idCategories = '12';
+    var tempQueryCategories = `select * from Category`;
+    const tempRowsCategories = await db.query(tempQueryCategories);
     words.forEach(word => {
-        var tempQuery = `select id from Category WHERE name = '%${word}%'`;
-        idCategories = idCategories.concat(',','1');
+        tempRowsCategories.forEach(tempCategory => {
+            if (tempCategory.name == word) {
+                idCategories = idCategories.concat(',',tempCategory.id);
+            }
+        });        
     });
     stringCategories= `SELECT * from Scene s join SceneCategory sc on s.id = sc.sceneId where sc.categoryId in (${idCategories})`;
 
