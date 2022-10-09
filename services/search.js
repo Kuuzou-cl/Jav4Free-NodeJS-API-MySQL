@@ -12,6 +12,7 @@ async function getSearch(title) {
         const element = words[index];
         stringIdols.concat(' ', element);
     }
+    stringIdols.concat(' ', 'test');
     const rowsIdols = await db.query(stringIdols);
     const dataIdols = helper.emptyOrRows(rowsIdols);
 
