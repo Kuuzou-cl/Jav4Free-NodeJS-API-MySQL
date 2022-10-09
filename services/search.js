@@ -26,7 +26,7 @@ async function getSearch(title) {
             }
         });        
     });
-    stringCategories= `SELECT * from Scene s join SceneCategory sc on s.id = sc.sceneId where sc.categoryId in (${idCategories})`;
+    stringCategories= `SELECT * from Scene s join SceneCategory sc on s.id = sc.sceneId where sc.categoryId in (${tempRowsCategories[0].name})`;
 
     return{
         searching,
