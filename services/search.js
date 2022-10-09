@@ -7,7 +7,7 @@ async function getSearch(title) {
     const words = title.split(' ');
 
     /* Idols search */
-    const stringIdols = `select * from Idol i WHERE name like '%${searching}%' `;
+    var stringIdols = `select * from Idol i WHERE name like '%${searching}%' `;
     words.forEach(word => {
         stringIdols = stringIdols.concat(' ', `union select * from Idol i WHERE name like '%${word}%'`);
     });
