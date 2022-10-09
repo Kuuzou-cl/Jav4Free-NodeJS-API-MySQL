@@ -18,6 +18,7 @@ async function getSearch(title) {
     return{
         searching,
         dataIdols,
+        stringIdols,
         words
     }
 }
