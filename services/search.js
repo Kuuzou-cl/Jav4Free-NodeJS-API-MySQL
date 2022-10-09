@@ -56,16 +56,16 @@ async function getSearch(title, page = 1) {
     const rowsScenes = await db.query(stringScenes);
     stringScenes = stringScenes.concat(' order by id ', `LIMIT ${offset},${config.listPerPageScenes}`)
     const rowsScenesLimit = await db.query(stringScenes);
-    const dataScenes = helper.emptyOrRows(rowsScenes);
-    const dataScenesLimit = helper.emptyOrRows(rowsScenesLimit);
+    const dataScenesNoLimit = helper.emptyOrRows(rowsScenes);
+    const dataScenes = helper.emptyOrRows(rowsScenesLimit);
 
-    const pagesData = helper.getCountPages(page,config.listPerPageScenes,dataScenes.length);
+    const pagesData = helper.getCountPages(page,config.listPerPageScenes,dataScenesNoLimit.length);
 
     const meta = { page : page, nextPage: pagesData.nextPage, lastPage: pagesData.lastPage };
 
     return {
         dataIdols,
-        dataScenesLimit,
+        dataScenes,
         meta
     }
 }
