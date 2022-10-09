@@ -21,12 +21,12 @@ async function getSearch(title) {
     const tempRowsCategories = await db.query(tempQueryCategories);
     words.forEach(word => {
         tempRowsCategories.forEach(tempCategory => {
-            if (tempCategory.name == word) {
+            if (tempCategory.name.toUpperCase() == word.toUpperCase()) {
                 idCategories = idCategories.concat(',',tempCategory.id);
             }
         });        
     });
-    stringCategories= `SELECT * from Scene s join SceneCategory sc on s.id = sc.sceneId where sc.categoryId in (${tempRowsCategories[0].name})`;
+    stringCategories= `SELECT * from Scene s join SceneCategory sc on s.id = sc.sceneId where sc.categoryId in (${idCategories})`;
 
     return{
         searching,
