@@ -17,10 +17,9 @@ async function getSearch(title) {
     /* Categories search */
     var stringCategories;
     var idCategories = '12';
-    words.forEach(async word => {
+    words.forEach(word => {
         var tempQuery = `select id from Category WHERE name = '%${word}%'`;
-        var tempRow = await db.query(tempQuery);
-        idCategories = idCategories.concat(',','1')
+        idCategories = idCategories.concat(',','1');
     });
     stringCategories= `SELECT * from Scene s join SceneCategory sc on s.id = sc.sceneId where sc.categoryId in (${idCategories})`;
 
