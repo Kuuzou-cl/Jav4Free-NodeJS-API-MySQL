@@ -54,14 +54,12 @@ async function getSearch(title) {
     const rowsScenes = await db.query(stringScenes);
     const dataScenes = helper.emptyOrRows(rowsScenes);
 
-
     return {
         searching,
         words,
         dataIdols,
         dataScenes,
-        stringScenes,
-        stringCode
+        stringScenes
     }
 }
 
