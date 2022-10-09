@@ -41,8 +41,15 @@ async function getSearch(title) {
     });
     stringIdIdols = stringIdIdols.concat('',')');
 
+    var stringCode = `SELECT * from Scene s WHERE s.code like '%XXX%'`;
+    words.forEach(word => {
+        var tempWord = `or s.code like '%${word}%'`;
+        stringCode = stringCode.concat(' ', tempWord);
+    });
+
     stringScenes = stringScenes.concat(' union ',stringIdCategories);
     stringScenes = stringScenes.concat(' union ',stringIdIdols);
+    stringScenes = stringScenes.concat(' union ',stringCode);
 
     const rowsScenes = await db.query(stringScenes);
     const dataScenes = helper.emptyOrRows(rowsScenes);
@@ -53,7 +60,8 @@ async function getSearch(title) {
         words,
         dataIdols,
         dataScenes,
-        stringScenes
+        stringScenes,
+        stringCode
     }
 }
 
