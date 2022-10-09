@@ -8,12 +8,12 @@ async function getSearch(title) {
 
     /* Idols search */
     const stringIdols = `select * from Idol i WHERE name like '%${searching}%' `;
-    words.forEach(word => {
-        stringIdols.concat(' ', `union select * from Idol i WHERE name like '%${word}%'`);
-    });
+    for (let index = 0; index < words.length; index++) {
+        const element = words[index];
+        stringIdols.concat(' ', element);
+    }
     const rowsIdols = await db.query(stringIdols);
     const dataIdols = helper.emptyOrRows(rowsIdols);
-
 
     return{
         searching,
