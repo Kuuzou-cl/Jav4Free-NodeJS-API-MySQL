@@ -20,7 +20,7 @@ async function getSearch(title) {
     const dataScenes = helper.emptyOrRows(rowsScenes);
 
     /* Search per word */
-    var stringIdCategories = '';
+    var stringIdCategories = 'SELECT * from Scene s join SceneCategory sc on s.id = sc.sceneId where sc.categoryId in (';
     const tempAllRowsCategories = await db.query(`select * from Category`);
     words.forEach(word => {
         tempAllRowsCategories.forEach(tempCategory => {
@@ -29,8 +29,9 @@ async function getSearch(title) {
             }
         });
     });
+    stringIdCategories = stringIdCategories.concat('',')');
 
-    var stringIdIdols = '';
+    var stringIdIdols = 'SELECT * FROM Scene s join SceneIdol si on s.id = si.sceneId WHERE si.idolId in (';
     const tempAllRowsIdols = await db.query(`select * from Idol`);
     words.forEach(word => {
         tempAllRowsIdols.forEach(tempIdol => {
@@ -39,6 +40,7 @@ async function getSearch(title) {
             }
         });
     });
+    stringIdIdols = stringIdIdols.concat('',')');
 
     return {
         searching,
