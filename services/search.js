@@ -2,7 +2,8 @@ const db = require('./db');
 const helper = require('../helper');
 const config = require('../config');
 
-async function getSearch(title) {
+async function getSearch(title, page = 1) {
+    const offset = helper.getOffset(page, config.listPerPageScenes);
     const searching = title;
     const words = title.split(' ');
 
@@ -50,16 +51,19 @@ async function getSearch(title) {
     stringScenes = stringScenes.concat(' union ',stringIdCategories);
     stringScenes = stringScenes.concat(' union ',stringIdIdols);
     stringScenes = stringScenes.concat(' union ',stringCode);
+    stringScenes = stringScenes.concat(' order by id ', `LIMIT ${offset},${config.listPerPageScenes}`)
 
     const rowsScenes = await db.query(stringScenes);
     const dataScenes = helper.emptyOrRows(rowsScenes);
 
+    const pagesData = helper.getCountPages(page,config.listPerPageScenes,dataScenes.length);
+
+    const meta = { page : page, nextPage: pagesData.nextPage, lastPage: pagesData.lastPage };
+
     return {
-        searching,
-        words,
         dataIdols,
         dataScenes,
-        stringScenes
+        meta
     }
 }
 
