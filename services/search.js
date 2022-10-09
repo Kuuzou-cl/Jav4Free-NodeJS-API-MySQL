@@ -34,7 +34,7 @@ async function getSearch(title) {
     const tempAllRowsIdols = await db.query(`select * from Idol`);
     words.forEach(word => {
         tempAllRowsIdols.forEach(tempIdol => {
-            if (tempIdol.name.toUpperCase() == word.toUpperCase()) {
+            if (tempIdol.name.toUpperCase().includes(word.toUpperCase())) {
                 stringIdIdols = stringIdIdols.concat(',', tempIdol.id);
             }
         });
