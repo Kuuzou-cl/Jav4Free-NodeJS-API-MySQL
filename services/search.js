@@ -14,30 +14,39 @@ async function getSearch(title) {
     const rowsIdols = await db.query(stringIdols);
     const dataIdols = helper.emptyOrRows(rowsIdols);
 
-    /* Scenes search */
+    /* Scenes title or code search */
     var stringScenes = `SELECT * FROM Scene s where s.title like '%${searching}%' union SELECT * FROM Scene s WHERE s.code like '%${searching}%'`
     const rowsScenes = await db.query(stringScenes);
     const dataScenes = helper.emptyOrRows(rowsScenes);
 
-    /* Categories search */
-    var stringCategories;
-    var idCategories = '12';
-    var tempQueryCategories = `select * from Category`;
-    const tempRowsCategories = await db.query(tempQueryCategories);
+    /* Search per word */
+    var stringIdCategories = '';
+    const tempAllRowsCategories = await db.query(`select * from Category`);
     words.forEach(word => {
-        tempRowsCategories.forEach(tempCategory => {
+        tempAllRowsCategories.forEach(tempCategory => {
             if (tempCategory.name.toUpperCase() == word.toUpperCase()) {
-                idCategories = idCategories.concat(',', tempCategory.id);
+                stringIdCategories = stringIdCategories.concat(',', tempCategory.id);
             }
         });
     });
-    stringCategories = `SELECT * from Scene s join SceneCategory sc on s.id = sc.sceneId where sc.categoryId in (${idCategories})`;
+
+    var stringIdIdols = '';
+    const tempAllRowsIdols = await db.query(`select * from Idol`);
+    words.forEach(word => {
+        tempAllRowsIdols.forEach(tempIdol => {
+            if (tempIdol.name.toUpperCase() == word.toUpperCase()) {
+                stringIdIdols = stringIdIdols.concat(',', tempIdol.id);
+            }
+        });
+    });
 
     return {
         searching,
         words,
         dataIdols,
-        dataScenes
+        dataScenes,
+        stringIdCategories,
+        stringIdIdols
     }
 }
 
