@@ -14,6 +14,11 @@ async function getSearch(title) {
     const rowsIdols = await db.query(stringIdols);
     const dataIdols = helper.emptyOrRows(rowsIdols);
 
+    /* Scenes search */
+    var stringScenes = `SELECT * FROM Scene s where s.title like '%${searching}%' union SELECT * FROM Scene s WHERE s.code like '%${searching}%'`
+    const rowsScenes = await db.query(stringScenes);
+    const dataScenes = helper.emptyOrRows(rowsScenes);
+
     /* Categories search */
     var stringCategories;
     var idCategories = '12';
@@ -22,18 +27,17 @@ async function getSearch(title) {
     words.forEach(word => {
         tempRowsCategories.forEach(tempCategory => {
             if (tempCategory.name.toUpperCase() == word.toUpperCase()) {
-                idCategories = idCategories.concat(',',tempCategory.id);
+                idCategories = idCategories.concat(',', tempCategory.id);
             }
-        });        
+        });
     });
-    stringCategories= `SELECT * from Scene s join SceneCategory sc on s.id = sc.sceneId where sc.categoryId in (${idCategories})`;
+    stringCategories = `SELECT * from Scene s join SceneCategory sc on s.id = sc.sceneId where sc.categoryId in (${idCategories})`;
 
-    return{
+    return {
         searching,
-        dataIdols,
         words,
-        stringCategories,
-        idCategories
+        dataIdols,
+        dataScenes
     }
 }
 
