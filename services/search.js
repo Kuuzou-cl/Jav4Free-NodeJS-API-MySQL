@@ -51,10 +51,13 @@ async function getSearch(title, page = 1) {
     stringScenes = stringScenes.concat(' union ',stringIdCategories);
     stringScenes = stringScenes.concat(' union ',stringIdIdols);
     stringScenes = stringScenes.concat(' union ',stringCode);
-    stringScenes = stringScenes.concat(' order by id ', `LIMIT ${offset},${config.listPerPageScenes}`)
+    
 
     const rowsScenes = await db.query(stringScenes);
+    stringScenes = stringScenes.concat(' order by id ', `LIMIT ${offset},${config.listPerPageScenes}`)
+    const rowsScenesLimit = await db.query(stringScenes);
     const dataScenes = helper.emptyOrRows(rowsScenes);
+    const dataScenesLimit = helper.emptyOrRows(rowsScenesLimit);
 
     const pagesData = helper.getCountPages(page,config.listPerPageScenes,dataScenes.length);
 
@@ -62,7 +65,7 @@ async function getSearch(title, page = 1) {
 
     return {
         dataIdols,
-        dataScenes,
+        dataScenesLimit,
         meta
     }
 }
