@@ -15,7 +15,7 @@ const s3 = new aws.S3({
 
 async function getScenes() {
     try {
-        const files = await s3.listObjectsV2({ Bucket: 'jav4free-s3-data', Prefix: 'scenes' }).promise();
+        const files = await s3.listObjectsV2({ Bucket: 'jav4free-s3-data', Prefix: 'scenes-480/', MaxKeys: 5000 }).promise();
         const names = files.Contents.map(file => file.Key)
         return { success: true, data: names, files: files }
     } catch (error) {
