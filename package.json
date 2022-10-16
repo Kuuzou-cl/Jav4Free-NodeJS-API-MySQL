@@ -2,10 +2,10 @@
   "name": "jav4free-nodejs-api-mysql",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "jav4free.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index.js"
+    "start": "node jav4free.js"
   },
   "keywords": [],
   "author": "",
