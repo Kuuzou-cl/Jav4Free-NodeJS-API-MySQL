@@ -9,13 +9,14 @@ const spacesEndpoint = new aws.Endpoint('s3.amazonaws.com');
 const s3 = new aws.S3({
     endpoint: spacesEndpoint,
     accessKeyId: 'AKIATFEAPAONSNFVTAEW',
-    secretAccessKey: '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'
+    secretAccessKey: '6Y8CZaptUKafmU0MO5xLXdcnjJkcl7z7QqYSi1mb',
+    signatureVersion: 'v2'
 });
 
 
 async function getScenes() {
     try {
-        const files = await s3.listObjectsV2({ Bucket: 'jav4free-s3-data/scenes' }).promise();
+        const files = await s3.listObjectsV2({ Bucket: 'jav4free-s3-data\scenes' }).promise();
         const names = files.Contents.map(file => file.Key)
         return { success: true, data: names }
     } catch (error) {
