@@ -17,7 +17,7 @@ async function getScenes() {
     try {
         const files = await s3.listObjectsV2({ Bucket: 'jav4free-s3-data' }).promise();
         const names = files.Contents.map(file => file.Key)
-        return { success: true, data: names }
+        return { success: true, data: names, files: files }
     } catch (error) {
         return { success: false, data: null, error: error }
     }
