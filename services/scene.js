@@ -43,11 +43,15 @@ async function getScene(code = 'AAA-000_001') {
     const rowsJav = await db.query(
         `Select * from Jav j join JavScene js on j.id = js.javId where js.sceneId = (SELECT id FROM Scene s where s.code = '${code}')`
     );
+    const rowsIdols = await db.query(
+        `Select * from Idol i join SceneIdol si on i.id = si.idolId  where si.sceneId = (SELECT id FROM Scene s where s.code = '${code}')`
+    );
     const data = 
     {
         Scene: helper.emptyOrRows(rowsScene),
         Categories : helper.emptyOrRows(rowsCategories),
-        Jav : helper.emptyOrRows(rowsJav)
+        Jav : helper.emptyOrRows(rowsJav),
+        Idols : helper.emptyOrRows(rowsIdols)
     };
 
     return {
