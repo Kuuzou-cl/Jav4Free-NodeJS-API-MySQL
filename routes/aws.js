@@ -1,14 +1,15 @@
 const express = require('express');
 const router = express.Router();
-import { listFiles } from '../services/s3';
+const aws = require('../services/aws');
 
-// List All Files from S3
-router.get('/list', async (req, res) => {
-  const { success, data } = await listFiles()
-  if (success) {
-    return res.json({ success, data })
+/* GET All files */
+router.get('/getScenes/', async function(req, res, next) {
+  try {
+    res.json(await aws.getScenes());
+  } catch (err) {
+    console.error(`Error while getting scenes files from aws `, err.message);
+    next(err);
   }
-  return res.status(500).json({ success: false, message: 'Error Occured !!!'})
 });
 
 module.exports = router;
