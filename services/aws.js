@@ -5,17 +5,20 @@ const aws = require('aws-sdk')
 var multer = require('multer')
 var multerS3 = require('multer-s3')
 
-const spacesEndpoint = new aws.Endpoint('s3.amazonaws.com');
-const s3 = new aws.S3({
-    endpoint: spacesEndpoint,
+AWS.config.update({
     region: "us-east-1",
     accessKeyId: 'AKIATFEAPAONSNFVTAEW',
     secretAccessKey: '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'
 });
 
-async function getScenes() {
+const s3 = new AWS.S3();
+
+const BUCKET_NAME = 'jav4free-s3-data';
+
+// List All Files Names from S3
+const listFiles = async () => {
     try {
-        const files = await s3.listObjectsV2({ Bucket: 'jav4free-s3-data/scenes' }).promise();
+        const files = await s3.listObjectsV2({ Bucket: BUCKET_NAME }).promise();
         const names = files.Contents.map(file => file.Key)
         return { success: true, data: names }
     } catch (error) {
@@ -23,6 +26,6 @@ async function getScenes() {
     }
 }
 
-module.exports = {
-    getScenes
+export {
+    listFiles
 }
