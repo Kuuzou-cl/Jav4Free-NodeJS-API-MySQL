@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express();
 const port = 3000;
+const awsRouter = require("./routes/aws");
 const javsRouter = require("./routes/javs");
 const scenesRouter = require("./routes/scenes");
 const idolsRouter = require("./routes/idols");
@@ -24,6 +25,8 @@ app.use(cors(
 app.get("/", (req, res) => {
   res.json({ message: "ok" });
 });
+
+app.use("/aws", awsRouter);
 
 app.use("/javs", javsRouter);
 
