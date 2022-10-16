@@ -5,7 +5,7 @@ const aws = require('aws-sdk')
 var multer = require('multer')
 var multerS3 = require('multer-s3')
 
-const spacesEndpoint = new aws.Endpoint('s3.amazonaws.coom');
+const spacesEndpoint = new aws.Endpoint('s3.amazonaws.com');
 const s3 = new aws.S3({
     endpoint: spacesEndpoint,
     accessKeyId: 'AKIATFEAPAONSNFVTAEW',
@@ -30,7 +30,8 @@ async function getAll() {
     var data = files.array('file',99);
 
     return {
-        data
+        data,
+        files
     }
 }
 
