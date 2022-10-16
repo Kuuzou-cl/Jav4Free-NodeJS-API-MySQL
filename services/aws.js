@@ -12,29 +12,17 @@ const s3 = new aws.S3({
     secretAccessKey: '6Y8CZaptUKafmU0MO5xLXdcnjJkcl7z7QqYSi1mb'
 });
 
-async function getAll() {
-    var files = multer({
-        storage: multerS3({
-            s3: s3,
-            bucket: 'jav4free-s3-data',
-            acl: 'public-read',
-            metadata: function (req, file, cb) {
-                cb(null, { fieldName: file.fieldname });
-            },
-            key: function (req, file, cb) {
-                cb(null, file.originalname)
-            }
-        })
-    })
 
-    var data = files.array('file',99);
-
-    return {
-        data,
-        files
+async function getScenes() {
+    try {
+        const files = await s3.listObjectsV2({ Bucket: 'jav4free-s3-data/scenes' }).promise();
+        const names = files.Contents.map(file => file.Key)
+        return { success: true, data: names }
+    } catch (error) {
+        return { success: false, data: null }
     }
 }
 
 module.exports = {
-    getAll
+    getScenes
 }

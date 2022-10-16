@@ -3,11 +3,11 @@ const router = express.Router();
 const aws = require('../services/aws');
 
 /* GET All files */
-router.get('/', async function(req, res, next) {
+router.get('/getScenes/', async function(req, res, next) {
   try {
-    res.json(await aws.getAll());
+    res.json(await aws.getScenes());
   } catch (err) {
-    console.error(`Error while getting files from aws `, err.message);
+    console.error(`Error while getting scenes files from aws `, err.message);
     next(err);
   }
 });
