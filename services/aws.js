@@ -1,9 +1,9 @@
 const db = require('./db');
 const helper = require('../helper');
 const config = require('../config');
-const aws = require('aws-sdk')
-var multer = require('multer')
-var multerS3 = require('multer-s3')
+import AWS from 'aws-sdk';
+import multer from 'multer';
+import multerS3 from 'multer-s3';
 
 AWS.config.update({
     region: "us-east-1",

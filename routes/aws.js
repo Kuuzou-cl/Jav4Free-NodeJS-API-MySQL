@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-import { uploadFile, downloadFile, deleteFile, listFiles } from '../services/s3';
+import { listFiles } from '../services/s3';
 
 // List All Files from S3
 router.get('/list', async (req, res) => {
