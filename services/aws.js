@@ -8,10 +8,10 @@ var multerS3 = require('multer-s3')
 const spacesEndpoint = new aws.Endpoint('s3.amazonaws.com');
 const s3 = new aws.S3({
     endpoint: spacesEndpoint,
+    region: "us-east-1",
     accessKeyId: 'AKIATFEAPAONSNFVTAEW',
     secretAccessKey: '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'
 });
-
 
 async function getScenes() {
     try {
