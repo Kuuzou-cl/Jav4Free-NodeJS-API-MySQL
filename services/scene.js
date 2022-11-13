@@ -59,8 +59,153 @@ async function getScene(code = 'AAA-000_001') {
     }
 }
 
+async function getSceneId(id = 0) {
+    const rowsScene = await db.query(
+        `SELECT * FROM Scene s where s.id = ${id}`
+    );
+    const rowsCategories = await db.query(
+        `SELECT * from Category c join SceneCategory sc on c.id = sc.categoryId where sc.sceneId  = ${id}`
+    );
+    const rowsIdols = await db.query(
+        `Select * from Idol i join SceneIdol si on i.id = si.idolId  where si.sceneId = ${id}`
+    );
+    const data = 
+    {
+        Scene: helper.emptyOrRows(rowsScene[0]),
+        Categories : helper.emptyOrRows(rowsCategories),
+        Idols : helper.emptyOrRows(rowsIdols)
+    };
+
+    return {
+        data
+    }
+}
+
+async function getAll() {
+    const rows = await db.query(
+        `select * from Scene s order by code`
+    );
+    const data = {Scenes: helper.emptyOrRows(rows)};
+    return{
+        data
+    }
+}
+
+async function newScene(title = 'error', code = 'error', video = 'error', duration = 'error', hide = 1, previewImage = '', staticImage = '', vtt = '', video480p = '', categories = [],idols = []) {
+    const rows = await db.query(
+        `SELECT * FROM Scene where code = '${code}'`
+    );
+    const data = { Scenes : helper.emptyOrRows(rows) };
+
+    if (data.Scenes.length == 0) {
+        const result = await db.query(
+            `INSERT INTO Scene (title,code,video,duration,hide,previewImage,staticImage,vtt,video480p) VALUES ('${title}','${code}','${video}','${duration}',${hide},'${previewImage}','${staticImage}','${vtt}','${video480p}')`
+        );    
+        const newRows = await db.query(
+            `SELECT * FROM Scene where id = '${result.insertId}'`
+        );
+        
+        const newData = { Scene : helper.emptyOrRows(newRows) };
+
+        categories.forEach(async category => {
+            const resultCategory = await db.query(
+                `INSERT INTO SceneCategory (sceneId,categoryId) VALUES (${result.insertId},${category})`
+            ); 
+        });
+
+        idols.forEach(async idol => {
+            const resultIdol = await db.query(
+                `INSERT INTO SceneIdol (sceneId,idolId) VALUES (${result.insertId},${idol})`
+            ); 
+        });
+        return {
+            data: newData, meta: result
+        }
+    }else{
+        return {
+            error: 'Duplicated Scene code!'
+        }
+    }    
+}
+
+async function deleteScene(code = 'error') {
+    const rows = await db.query(
+        `SELECT * FROM Scene where code = '${code}'`
+    );
+    const data = { Scenes : helper.emptyOrRows(rows) };
+
+    if (data.Scenes.length == 1) {
+        const result = await db.query(
+            `DELETE FROM Scene WHERE code = '${code}'`
+        );    
+        return {
+            meta: result
+        }
+    }else{
+        return {
+            error: 'Scene code does not exist or it is not unique!'
+        }
+    }    
+}
+
+async function updateScene(id = 0, title = 'error', code = 'error', video = 'error', duration = 'error', hide = 1, previewImage = '', staticImage = '', vtt = '', video480p = '', categories = [],idols = []) {    
+    const rows = await db.query(
+        `SELECT * FROM Scene where id = ${id}`
+    );
+    const data = { Scenes : helper.emptyOrRows(rows) };
+
+    const rows2 = await db.query(
+        `SELECT * FROM Scene where code = '${code}'`
+    );
+    const data2 = { Scenes : helper.emptyOrRows(rows2) };
+
+    if (data.Scenes.length > 0 && (data2.Scenes.length == 0 || data.Scenes[0].id == data2.Scenes[0].id)) {
+        const result = await db.query(
+            `UPDATE Scene set title = '${title}', code = '${code}', video = '${video}', duration = '${duration}', hide = ${hide}, previewImage = '${previewImage}', staticImage = '${staticImage}', vtt = '${vtt}', video480p = '${video480p}' WHERE id = ${id}`
+        );    
+        const newRows = await db.query(
+            `SELECT * FROM Scene where id = ${id}`
+        );
+        
+        const newData = { Scene : helper.emptyOrRows(newRows) };
+
+        const deleteCategories = await db.query(
+            `DELETE FROM SceneCategory WHERE sceneId = ${id}`
+        );    
+
+        categories.forEach(async category => {
+            const resultCategory = await db.query(
+                `INSERT INTO SceneCategory (sceneId,categoryId) VALUES (${id},${category.id})`
+            ); 
+        });
+
+        const deleteIdol = await db.query(
+            `DELETE FROM SceneIdol WHERE sceneId = ${id}`
+        );    
+
+        idols.forEach(async idol => {
+            const resultIdol = await db.query(
+                `INSERT INTO SceneIdol (sceneId,idolId) VALUES (${id},${idol.id})`
+            ); 
+        });
+        
+        return {
+            data: newData, meta: result
+        }
+    }else{
+        return {
+            error: 'Duplicated Scene code or ID does not exist!'
+        }
+    }    
+}
+
 module.exports = {
     getMostViewed,
     getMultiple,
-    getScene
+    getScene,
+    getSceneId,
+    getAll,
+    newScene,
+    deleteScene,
+    updateScene
 }

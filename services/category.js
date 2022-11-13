@@ -13,6 +13,17 @@ async function getAll() {
     }
 }
 
+async function getCategory(id = 0) {
+    const rows = await db.query(
+        `SELECT * FROM Category WHERE id = ${id}`
+    );
+    const data = { Category : helper.emptyOrRows(rows)[0] };
+
+    return {
+        data
+    }
+}
+
 async function getScenes(page = 1, name = '', order = 'desc') {
     const offset = helper.getOffset(page, config.listPerPageScenes);
     if (order != 'desc' && order != 'asc') {
@@ -34,7 +45,63 @@ async function getScenes(page = 1, name = '', order = 'desc') {
     }
 }
 
+async function newCategory(name = 'error') {
+    const rows = await db.query(
+        `SELECT * FROM Category where name = '${name}'`
+    );
+    const data = { Categories : helper.emptyOrRows(rows) };
+
+    if (data.Categories.length == 0) {
+        const result = await db.query(
+            `INSERT INTO Category (name) VALUES ('${name}')`
+        );    
+        const newRows = await db.query(
+            `SELECT * FROM Category where id = '${result.insertId}'`
+        );
+        const newData = { Category : helper.emptyOrRows(newRows) };
+        return {
+            data: newData, meta: result
+        }
+    }else{
+        return {
+            error: 'Duplicated category name!'
+        }
+    }    
+}
+
+async function updateCategory(id= 0, name = 'error') {
+    const rows = await db.query(
+        `SELECT * FROM Category where id = ${id}`
+    );
+    const data = { Categories : helper.emptyOrRows(rows) };
+
+    const rows2 = await db.query(
+        `SELECT * FROM Category where name = '${name}'`
+    );
+    const data2 = { Categories : helper.emptyOrRows(rows2) };
+
+    if (data.Categories.length > 0 && data2.Categories.length == 0) {
+        const result = await db.query(
+            `UPDATE Category set name ='${name}' WHERE id = ${id}`
+        );    
+        const newRows = await db.query(
+            `SELECT * FROM Category where id = '${id}'`
+        );
+        const newData = { Category : helper.emptyOrRows(newRows) };
+        return {
+            data: newData, meta: result
+        }
+    }else{
+        return {
+            error: 'Duplicated category name or Id does not exist!'
+        }
+    }    
+}
+
 module.exports = {
     getAll,
-    getScenes
+    getCategory,
+    getScenes,
+    newCategory,
+    updateCategory
 }
