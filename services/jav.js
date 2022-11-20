@@ -8,10 +8,10 @@ async function getMultiple(page = 1, order = 'desc') {
         order = 'desc'
     }
     const rows = await db.query(
-        `SELECT * FROM Jav order by id ${order} LIMIT ${offset},${config.listPerPageJavs}`
+        `SELECT * FROM Jav WHERE hide = 0 order by id ${order} LIMIT ${offset},${config.listPerPageJavs}`
     );
     const maxRows = await db.query(
-        `SELECT * FROM Jav`
+        `SELECT * FROM Jav WHERE hide = 0 `
     );
     const pagesData = helper.getCountPages(page,config.listPerPageJavs,maxRows.length);
     const data = { Javs : helper.emptyOrRows(rows) };
@@ -25,7 +25,7 @@ async function getMultiple(page = 1, order = 'desc') {
 
 async function getNewest(limit = 1) {
     const rows = await db.query(
-        `SELECT * FROM Jav order by id desc LIMIT 0,${limit}`
+        `SELECT * FROM Jav WHERE hide = 0 order by id desc LIMIT 0,${limit}`
     );
     const data = 
     {
@@ -59,7 +59,7 @@ async function getJav(code = 'AAA-000') {
         `SELECT * from Category c join JavCategory jc on c.id = jc.categoryId where jc.javId = (SELECT id FROM Jav j where j.code = '${code}')`
     );
     const rowsScenes = await db.query(
-        `SELECT * FROM Scene s join JavScene js on js.sceneId = s.id where js.javId = (SELECT id FROM Jav j where j.code = '${code}')`
+        `SELECT * FROM Scene s join JavScene js on js.sceneId = s.id where js.javId = (SELECT id FROM Jav j where j.code = '${code}') and s.hide = 0 `
     );
     const rowsIdols = await db.query(
         `SELECT * from Idol i join JavIdol ji on ji.idolId = i.id WHERE ji.javId = (SELECT id FROM Jav j where j.code = '${code}')`
