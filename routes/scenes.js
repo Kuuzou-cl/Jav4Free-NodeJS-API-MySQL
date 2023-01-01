@@ -84,7 +84,7 @@ router.delete('/deleteScene', helper.isLoggedIn, async function (req, res, next)
   }
 });
 
-/* delete scene */
+/* update scene */
 router.patch('/updateScene', helper.isLoggedIn, async function (req, res, next) {
   try {
     res.json(await Scene.updateScene(

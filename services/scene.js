@@ -97,7 +97,16 @@ async function newScene(title = 'error', code = 'error', video = 'error', durati
     );
     const data = { Scenes : helper.emptyOrRows(rows) };
 
-    if (data.Scenes.length == 0) {
+    const arrayString = code.split('_');
+
+    const javFind = await db.query(
+        `SELECT * FROM Jav where code = '${arrayString[0]}'`
+    );
+
+    const dataJav = { Jav : helper.emptyOrRows(javFind) };
+
+    if (data.Scenes.length == 0 && dataJav.Jav.length > 0) {
+        
         const result = await db.query(
             `INSERT INTO Scene (title,code,video,duration,hide,previewImage,staticImage,vtt,video480p) VALUES ('${title}','${code}','${video}','${duration}',${hide},'${previewImage}','${staticImage}','${vtt}','${video480p}')`
         );    
@@ -118,6 +127,11 @@ async function newScene(title = 'error', code = 'error', video = 'error', durati
                 `INSERT INTO SceneIdol (sceneId,idolId) VALUES (${result.insertId},${idol})`
             ); 
         });
+
+        const javFind = await db.query(
+            `INSERT INTO JavScene (javId, sceneId) VALUES (${dataJav.Jav[0].id},${result.insertId})`
+        );
+
         return {
             data: newData, meta: result
         }
