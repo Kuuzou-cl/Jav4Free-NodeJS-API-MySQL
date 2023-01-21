@@ -191,7 +191,7 @@ async function getAllNotDB() {
             }
         }
 
-        return { success: true, dataJavs: dataJ, dataScenes: dataS, dataIdols: dataI, javObjects:javObjects, sceneObjects:sceneObjects, idolObjects:idolObjects }
+        return { success: true, dataJavs: dataJ, dataScenes: dataS, dataIdols: dataI }
     } catch (error) {
         return { success: false, data: null, error: error }
     }
