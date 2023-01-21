@@ -54,6 +54,16 @@ router.get('/getAll', async function (req, res, next) {
   }
 });
 
+/* new view of scene*/
+router.get('/newView', async function (req, res, next) {
+  try {
+    res.json(await Scene.getView(req.query.id));
+  } catch (err) {
+    console.error(`Error while creating view of Scene `, err.message);
+    next(err);
+  }
+});
+
 /* new scene */
 router.post('/newScene', helper.isLoggedIn, async function (req, res, next) {
   try {

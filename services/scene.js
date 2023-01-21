@@ -213,6 +213,16 @@ async function updateScene(id = 0, title = 'error', code = 'error', video = 'err
     }    
 }
 
+async function getView(id = 0) {
+    const rows = await db.query(
+        `INSERT INTO SceneView (sceneId) VALUES (${id})`
+    );
+    const data = helper.emptyOrRows(rows);
+    return{
+        data
+    }
+}
+
 module.exports = {
     getMostViewed,
     getMultiple,
@@ -221,5 +231,6 @@ module.exports = {
     getAll,
     newScene,
     deleteScene,
-    updateScene
+    updateScene,
+    getView
 }
