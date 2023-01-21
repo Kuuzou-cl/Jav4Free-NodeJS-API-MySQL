@@ -30,25 +30,62 @@ async function getAll() {
             row.videoVtt = false;
         });
 
-        const files720p = await s3.listObjectsV2({ Bucket: 'jav4free-s3-data', Prefix: 'scenes/', MaxKeys: 100000 }).promise();
-        const names720p = files720p.Contents.map(file => file.Key);
-        names720p.shift();
-        const files480p = await s3.listObjectsV2({ Bucket: 'jav4free-s3-data', Prefix: 'scenes_480/', MaxKeys: 100000 }).promise();
-        const names480p = files480p.Contents.map(file => file.Key);
-        names480p.shift();
-        const filesStatic = await s3.listObjectsV2({ Bucket: 'jav4free-s3-data', Prefix: 'scenes-static/', MaxKeys: 100000 }).promise();
-        const namesStatic = filesStatic.Contents.map(file => file.Key);
-        namesStatic.shift();
-        const filesPreview = await s3.listObjectsV2({ Bucket: 'jav4free-s3-data', Prefix: 'scenes-preview/', MaxKeys: 100000 }).promise();
-        const namesPreview = filesPreview.Contents.map(file => file.Key);
-        namesPreview.shift();
-        const filesSprite = await s3.listObjectsV2({ Bucket: 'jav4free-s3-data', Prefix: 'sprites/', MaxKeys: 100000 }).promise();
-        const namesSprite = filesSprite.Contents.map(file => file.Key);
-        namesSprite.shift();
-        const filesVtts = await s3.listObjectsV2({ Bucket: 'jav4free-s3-data', Prefix: 'vtts/', MaxKeys: 100000 }).promise();
-        const namesVtts = filesVtts.Contents.map(file => file.Key);
-        namesVtts.shift();
+        let continuationToken;
+        let names720p = [];
+        let names480p = [];
+        let namesStatic = [];
+        let namesPreview = [];
+        let namesSprite = [];
+        let namesVtts = [];
 
+        let files720p = await s3.listObjectsV2({ Bucket: 'jav4free-s3-data', Prefix: 'scenes/' }).promise();
+        while (files720p.IsTruncated) {
+            names720p.push(...files720p.Contents.map(file => file.Key));
+            continuationToken = files720p.NextContinuationToken;
+            files720p = await s3.listObjectsV2({ Bucket: 'jav4free-s3-data', ContinuationToken: continuationToken }).promise();
+        }
+
+        let files480p = await s3.listObjectsV2({ Bucket: 'jav4free-s3-data', Prefix: 'scenes_480/' }).promise();
+        while (files480p.IsTruncated) {
+            names480p.push(...files480p.Contents.map(file => file.Key));
+            continuationToken = files480p.NextContinuationToken;
+            files480p = await s3.listObjectsV2({ Bucket: 'jav4free-s3-data', ContinuationToken: continuationToken }).promise();
+        }
+
+        let filesStatic = await s3.listObjectsV2({ Bucket: 'jav4free-s3-data', Prefix: 'scenes-static/' }).promise();
+        while (filesStatic.IsTruncated) {
+            namesStatic.push(...filesStatic.Contents.map(file => file.Key));
+            continuationToken = filesStatic.NextContinuationToken;
+            filesStatic = await s3.listObjectsV2({ Bucket: 'jav4free-s3-data', ContinuationToken: continuationToken }).promise();
+        }
+
+        let filesPreview = await s3.listObjectsV2({ Bucket: 'jav4free-s3-data', Prefix: 'scenes-preview/' }).promise();
+        while (filesPreview.IsTruncated) {
+            namesPreview.push(...filesPreview.Contents.map(file => file.Key));
+            continuationToken = filesPreview.NextContinuationToken;
+            filesPreview = await s3.listObjectsV2({ Bucket: 'jav4free-s3-data', ContinuationToken: continuationToken }).promise();
+        }
+
+        let filesSprite = await s3.listObjectsV2({ Bucket: 'jav4free-s3-data', Prefix: 'sprites/' }).promise();
+        while (filesSprite.IsTruncated) {
+            namesSprite.push(...filesSprite.Contents.map(file => file.Key));
+            continuationToken = filesSprite.NextContinuationToken;
+            filesSprite = await s3.listObjectsV2({ Bucket: 'jav4free-s3-data', ContinuationToken: continuationToken }).promise();
+        }
+
+        let filesVtts = await s3.listObjectsV2({ Bucket: 'jav4free-s3-data', Prefix: 'vtts/' }).promise();
+        while (filesVtts.IsTruncated) {
+            namesVtts.push(...filesVtts.Contents.map(file => file.Key));
+            continuationToken = filesVtts.NextContinuationToken;
+            filesVtts = await s3.listObjectsV2({ Bucket: 'jav4free-s3-data', ContinuationToken: continuationToken }).promise();
+        }
+
+        names720p.shift();
+        names480p.shift();
+        namesStatic.shift();
+        namesPreview.shift();
+        namesSprite.shift();
+        namesVtts.shift();
 
         data.forEach(row => {
             for (let index = 0; index < names720p.length; index++) {
@@ -110,11 +147,11 @@ async function getAllNotDB() {
         const namesJavs = filesJavs.Contents.map(file => file.Key);
         namesJavs.shift();
 
-        for (let index = 0; index < namesJavs.length; index++) {            
-            if (dataJavs.some(item => ("javs/" +item.code + ".jpg") === namesJavs[index])) {
-                dataJ.push({file: namesJavs[index], state: true});
-            }else{
-                dataJ.push({file: namesJavs[index], state: false});
+        for (let index = 0; index < namesJavs.length; index++) {
+            if (dataJavs.some(item => ("javs/" + item.code + ".jpg") === namesJavs[index])) {
+                dataJ.push({ file: namesJavs[index], state: true });
+            } else {
+                dataJ.push({ file: namesJavs[index], state: false });
             }
         }
 
@@ -125,19 +162,26 @@ async function getAllNotDB() {
         );
         const dataScenes = helper.emptyOrRows(rowsScenes);
 
-        const filesScenes = await s3.listObjectsV2({ Bucket: 'jav4free-s3-data', Prefix: 'scenes/', MaxKeys: 100000 }).promise();
-        const namesScenes = filesScenes.Contents.map(file => file.Key);
+        let namesScenes = [];
+        let continuationToken;
+        let filesScenes = await s3.listObjectsV2({ Bucket: 'jav4free-s3-data', Prefix: 'scenes/' }).promise();
+        while (filesScenes.IsTruncated) {
+            namesScenes.push(...filesScenes.Contents.map(file => file.Key));
+            continuationToken = filesScenes.NextContinuationToken;
+            filesScenes = await s3.listObjectsV2({ Bucket: 'jav4free-s3-data', ContinuationToken: continuationToken }).promise();
+        }
+
         namesScenes.shift();
 
-        for (let index = 0; index < namesScenes.length; index++) {            
-            if (dataScenes.some(item => ("scenes/" +item.code + ".mp4") === namesScenes[index])) {
-                dataS.push({file: namesScenes[index], state: true});
-            }else{
-                dataS.push({file: namesScenes[index], state: false});
+        for (let index = 0; index < namesScenes.length; index++) {
+            if (dataScenes.some(item => ("scenes/" + item.code + ".mp4") === namesScenes[index])) {
+                dataS.push({ file: namesScenes[index], state: true });
+            } else {
+                dataS.push({ file: namesScenes[index], state: false });
             }
         }
 
-        return { success: true, dataJavs:dataJ, dataScenes: dataS }
+        return { success: true, dataJavs: dataJ, dataScenes: dataS }
     } catch (error) {
         return { success: false, data: null, error: error }
     }
