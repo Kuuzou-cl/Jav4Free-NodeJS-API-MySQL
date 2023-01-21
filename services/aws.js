@@ -59,13 +59,6 @@ async function getAll() {
             }
         }
 
-        sceneObjects.shift();
-        previewObjects.shift();
-        staticObjects.shift();
-        scene480Objects.shift();
-        spriteObjects.shift();
-        vttObjects.shift();
-
         const rows = await db.query(
             `select * from Scene s`
         );
@@ -106,7 +99,7 @@ async function getAll() {
                 }
             }
             for (let index = 0; index < spriteObjects.length; index++) {
-                if ("sprites/" + row.code + "_sprite.jpg" == spriteObjects[index]) {
+                if ("sprites/" + row.code + "_sprite.jpg" == spriteObjects[index]) {                    
                     row.videoSprite = true;
                     break;
                 }
@@ -119,7 +112,7 @@ async function getAll() {
             }
         });
 
-        return { success: true, data: data, objectsS3: objectsS3 }
+        return { success: true, data: data }
     } catch (error) {
         return { success: false, data: null, error: error }
     }
@@ -141,11 +134,6 @@ async function getAllNotDB() {
         let javObjects = [];
         let sceneObjects = [];
         let idolObjects = [];
-        let previewObjects = [];
-        let staticObjects = [];
-        let scene480Objects = [];
-        let spriteObjects = [];
-        let vttObjects = [];
 
         for (let index = 0; index < objectsS3.length; index++) {
             if (objectsS3[index].includes('javs/')) {
@@ -161,7 +149,6 @@ async function getAllNotDB() {
             }
         }
 
-        javObjects.shift();
         sceneObjects.shift();
         idolObjects.shift();
 
@@ -204,7 +191,7 @@ async function getAllNotDB() {
             }
         }
 
-        return { success: true, dataJavs: dataJ, dataScenes: dataS, dataIdols: dataI }
+        return { success: true, dataJavs: dataJ, dataScenes: dataS, dataIdols: dataI, javObjects:javObjects, sceneObjects:sceneObjects, idolObjects:idolObjects }
     } catch (error) {
         return { success: false, data: null, error: error }
     }
