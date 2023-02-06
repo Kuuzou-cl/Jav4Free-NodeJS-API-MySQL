@@ -33,6 +33,16 @@ async function getMultiple(page = 1, order = 'desc') {
     }
 }
 
+async function getScenes(limit = 1, order = 'desc') {
+    const rows = await db.query(
+        `SELECT * FROM Scene WHERE hide = 0  order by id ${order} LIMIT 0,${limit}`
+    );
+    const data = {Scenes : helper.emptyOrRows(rows)};
+    return {
+        data
+    }
+}
+
 async function getScene(code = 'AAA-000_001') {
     const rowsScene = await db.query(
         `SELECT * FROM Scene s where s.code = '${code}'`
@@ -227,6 +237,7 @@ module.exports = {
     getMostViewed,
     getMultiple,
     getScene,
+    getScenes,
     getSceneId,
     getAll,
     newScene,

@@ -23,6 +23,16 @@ router.get('/scene', async function (req, res, next) {
   }
 });
 
+/* GET Scenes by limit */
+router.get('/scenes', async function (req, res, next) {
+  try {
+    res.json(await Scene.getScenes(req.query.limit, req.query.order));
+  } catch (err) {
+    console.error(`Error while getting Scenes `, err.message);
+    next(err);
+  }
+});
+
 /* GET Scene by Id */
 router.get('/sceneId', async function (req, res, next) {
   try {
