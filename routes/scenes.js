@@ -43,6 +43,16 @@ router.get('/sceneId', async function (req, res, next) {
   }
 });
 
+/* GET related Scenes by Id Scene */
+router.get('/relatedScenes', async function (req, res, next) {
+  try {
+    res.json(await Scene.getRelatedScenes(req.query.id, req.query.limit));
+  } catch (err) {
+    console.error(`Error while getting Scene `, err.message);
+    next(err);
+  }
+});
+
 
 /* GET Scene by most views and limit */
 router.get('/byviews', async function (req, res, next) {

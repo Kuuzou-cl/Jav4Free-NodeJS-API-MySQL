@@ -43,6 +43,19 @@ async function getScenes(limit = 1, order = 'desc') {
     }
 }
 
+async function getRelatedScenes(id = 1, limit = 1) {
+    const rows = await db.query(
+        `SELECT s.id as Scene, (SELECT count(c1.id) FROM Category c1 JOIN SceneCategory sc1 ON c1.id = sc1.categoryId WHERE sc1.sceneId = s.id and c1.id
+        IN 
+        (SELECT c2.id FROM Category c2 JOIN SceneCategory sc2 ON c2.id = sc2.categoryId WHERE sc2.sceneId = ${id})) as matchCount 
+        from Scene s where id <> ${id} order by matchCount desc limit ${limit}`
+    );
+    const data = {Scenes : helper.emptyOrRows(rows)};
+    return {
+        data
+    }
+}
+
 async function getScene(code = 'AAA-000_001') {
     const rowsScene = await db.query(
         `SELECT * FROM Scene s where s.code = '${code}'`
@@ -243,5 +256,6 @@ module.exports = {
     newScene,
     deleteScene,
     updateScene,
-    getView
+    getView,
+    getRelatedScenes
 }
