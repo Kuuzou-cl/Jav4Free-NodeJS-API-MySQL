@@ -48,7 +48,7 @@ router.get('/relatedScenes', async function (req, res, next) {
   try {
     res.json(await Scene.getRelatedScenes(req.query.id, req.query.limit));
   } catch (err) {
-    console.error(`Error while getting Scene `, err.message);
+    console.error(`Error while getting related Scenes `, err.message);
     next(err);
   }
 });
