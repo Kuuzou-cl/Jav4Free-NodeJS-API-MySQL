@@ -4,7 +4,7 @@ const config = require('../config');
 
 async function getMostViewed(limit = 1) {
     const rows = await db.query(
-        `SELECT s.*, COUNT(sv.sceneId) as totalViews  from SceneView sv join Scene s ON sv.sceneId = s.id GROUP by sv.sceneId order by totalViews desc limit 0,${limit}`
+        `SELECT s.*, COUNT(sv.sceneId) as totalViews  from SceneView sv join Scene s ON sv.sceneId = s.id WHERE sv.creation between date_sub(now(),INTERVAL 1 WEEK) and now() GROUP by sv.sceneId order by totalViews desc limit 0,${limit}`
     );
     const data = helper.emptyOrRows(rows);
     return{
