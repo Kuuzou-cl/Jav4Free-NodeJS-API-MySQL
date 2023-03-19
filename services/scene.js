@@ -43,6 +43,16 @@ async function getScenes(limit = 1, order = 'desc') {
     }
 }
 
+async function getScenesRandom(limit = 1) {
+    const rows = await db.query(
+        `SELECT * FROM Scene WHERE hide = 0  order by RAND() LIMIT 0,${limit}`
+    );
+    const data = {Scenes : helper.emptyOrRows(rows)};
+    return {
+        data
+    }
+}
+
 async function getRelatedScenes(id = 1, limit = 1) {
     const rows = await db.query(
         `SELECT s.*, (SELECT count(c1.id) FROM Category c1 JOIN SceneCategory sc1 ON c1.id = sc1.categoryId WHERE sc1.sceneId = s.id and c1.id
@@ -257,5 +267,6 @@ module.exports = {
     deleteScene,
     updateScene,
     getView,
-    getRelatedScenes
+    getRelatedScenes,
+    getScenesRandom
 }
