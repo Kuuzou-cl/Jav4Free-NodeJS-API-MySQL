@@ -26,7 +26,7 @@ router.get('/scene', async function (req, res, next) {
 /* GET Scenes by limit */
 router.get('/scenesRandom', async function (req, res, next) {
   try {
-    res.json(await Scene.getScenesRandom(req.query.limit, req.query.order));
+    res.json(await Scene.getScenesRandom(req.query.limit));
   } catch (err) {
     console.error(`Error while getting Scenes `, err.message);
     next(err);
