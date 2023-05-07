@@ -148,7 +148,7 @@ router.patch('/updateScene', helper.isLoggedIn, async function (req, res, next) 
 
 /* New petitions V2 APP NUXT3 ---------------------------------------------------------------------------------------------------- */
 
-router.get('/', async function (req, res, next) {
+router.get('/v2', async function (req, res, next) {
   try {
     res.json(await Scene.getMultipleV2(req.query.page, req.query.order));
   } catch (err) {
@@ -157,7 +157,7 @@ router.get('/', async function (req, res, next) {
   }
 });
 
-router.get('/scene', async function (req, res, next) {
+router.get('/scenev2', async function (req, res, next) {
   try {
     res.json(await Scene.getSceneV2(req.query.code));
   } catch (err) {
@@ -166,7 +166,7 @@ router.get('/scene', async function (req, res, next) {
   }
 });
 
-router.get('/scenesRandom', async function (req, res, next) {
+router.get('/scenesRandomv2', async function (req, res, next) {
   try {
     res.json(await Scene.getScenesRandomV2(req.query.limit));
   } catch (err) {
@@ -175,7 +175,7 @@ router.get('/scenesRandom', async function (req, res, next) {
   }
 });
 
-router.get('/scenes', async function (req, res, next) {
+router.get('/scenesv2', async function (req, res, next) {
   try {
     res.json(await Scene.getScenesV2(req.query.limit, req.query.order));
   } catch (err) {
@@ -184,7 +184,7 @@ router.get('/scenes', async function (req, res, next) {
   }
 });
 
-router.get('/sceneId', async function (req, res, next) {
+router.get('/sceneIdv2', async function (req, res, next) {
   try {
     res.json(await Scene.getSceneIdV2(req.query.id));
   } catch (err) {
@@ -193,7 +193,7 @@ router.get('/sceneId', async function (req, res, next) {
   }
 });
 
-router.get('/relatedScenes', async function (req, res, next) {
+router.get('/relatedScenesv2', async function (req, res, next) {
   try {
     res.json(await Scene.getRelatedScenesV2(req.query.id, req.query.limit));
   } catch (err) {
@@ -203,7 +203,7 @@ router.get('/relatedScenes', async function (req, res, next) {
 });
 
 
-router.get('/byviews', async function (req, res, next) {
+router.get('/byviewsv2', async function (req, res, next) {
   try {
     res.json(await Scene.getMostViewedV2(req.query.limit));
   } catch (err) {
@@ -212,7 +212,7 @@ router.get('/byviews', async function (req, res, next) {
   }
 });
 
-router.get('/getAll', async function (req, res, next) {
+router.get('/getAllv2', async function (req, res, next) {
   try {
     res.json(await Scene.getAllV2());
   } catch (err) {
@@ -221,7 +221,7 @@ router.get('/getAll', async function (req, res, next) {
   }
 });
 
-router.get('/newView', async function (req, res, next) {
+router.get('/newViewv2', async function (req, res, next) {
   try {
     res.json(await Scene.getViewV2(req.query.id));
   } catch (err) {
@@ -230,7 +230,7 @@ router.get('/newView', async function (req, res, next) {
   }
 });
 
-router.post('/newScene', helper.isLoggedIn, async function (req, res, next) {
+router.post('/newScenev2', helper.isLoggedIn, async function (req, res, next) {
   try {
     res.json(await Scene.newSceneV2(
       req.body.title,
@@ -249,7 +249,7 @@ router.post('/newScene', helper.isLoggedIn, async function (req, res, next) {
   }
 });
 
-router.delete('/deleteScene', helper.isLoggedIn, async function (req, res, next) {
+router.delete('/deleteScenev2', helper.isLoggedIn, async function (req, res, next) {
   try {
     res.json(await Scene.deleteSceneV2(
       req.body.code));
@@ -258,7 +258,7 @@ router.delete('/deleteScene', helper.isLoggedIn, async function (req, res, next)
   }
 });
 
-router.patch('/updateScene', helper.isLoggedIn, async function (req, res, next) {
+router.patch('/updateScenev2', helper.isLoggedIn, async function (req, res, next) {
   try {
     res.json(await Scene.updateSceneV2(
       req.body.id,

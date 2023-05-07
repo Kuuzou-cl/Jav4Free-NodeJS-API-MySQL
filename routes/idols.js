@@ -73,7 +73,7 @@ router.patch('/updateIdol', helper.isLoggedIn, async function (req, res, next) {
 
 /* New petitions V2 APP NUXT3 ---------------------------------------------------------------------------------------------------- */
 
-router.get('/', async function(req, res, next) {
+router.get('/v2', async function(req, res, next) {
   try {
     res.json(await idols.getMultipleV2(req.query.page,req.query.order));
   } catch (err) {
@@ -82,7 +82,7 @@ router.get('/', async function(req, res, next) {
   }
 });
 
-router.get('/scenes', async function(req, res, next) {
+router.get('/scenesv2', async function(req, res, next) {
   try {
     res.json(await idols.getScenesV2(req.query.page,req.query.name,req.query.order));
   } catch (err) {
@@ -91,7 +91,7 @@ router.get('/scenes', async function(req, res, next) {
   }
 });
 
-router.get('/featured', async function(req, res, next) {
+router.get('/featuredv2', async function(req, res, next) {
   try {
     res.json(await idols.getFeaturedV2(req.query.limit));
   } catch (err) {
@@ -100,7 +100,7 @@ router.get('/featured', async function(req, res, next) {
   }
 });
 
-router.get('/getAll', async function(req, res, next) {
+router.get('/getAllv2', async function(req, res, next) {
   try {
     res.json(await idols.getAllV2());
   } catch (err) {
@@ -109,7 +109,7 @@ router.get('/getAll', async function(req, res, next) {
   }
 });
 
-router.post('/newIdol', helper.isLoggedIn, async function (req, res, next) {
+router.post('/newIdolv2', helper.isLoggedIn, async function (req, res, next) {
   try {
     res.json(await idols.newIdolV2(req.body.name,req.body.image,req.body.hide));  
   } catch (error) {
@@ -117,7 +117,7 @@ router.post('/newIdol', helper.isLoggedIn, async function (req, res, next) {
   }
 });
 
-router.get('/getIdol', async function(req, res, next) {
+router.get('/getIdolv2', async function(req, res, next) {
   try {
     res.json(await idols.getIdolV2(req.query.id));
   } catch (err) {
@@ -126,7 +126,7 @@ router.get('/getIdol', async function(req, res, next) {
   }
 });
 
-router.patch('/updateIdol', helper.isLoggedIn, async function (req, res, next) {
+router.patch('/updateIdolv2', helper.isLoggedIn, async function (req, res, next) {
   try {
     res.json(await idols.updateIdolV2(req.body.id,req.body.name,req.body.image));  
   } catch (error) {

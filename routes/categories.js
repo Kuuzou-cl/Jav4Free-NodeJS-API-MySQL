@@ -53,7 +53,7 @@ router.patch('/updateCategory', helper.isLoggedIn, async function (req, res, nex
 
 /* New petitions V2 APP NUXT3 ---------------------------------------------------------------------------------------------------- */
 
-router.get('/', async function(req, res, next) {
+router.get('/v2', async function(req, res, next) {
   try {
     res.json(await categories.getAllV2());
   } catch (err) {
@@ -62,7 +62,7 @@ router.get('/', async function(req, res, next) {
   }
 });
 
-router.get('/getCategory', async function(req, res, next) {
+router.get('/getCategoryv2', async function(req, res, next) {
   try {
     res.json(await categories.getCategoryV2(req.query.id));
   } catch (err) {
@@ -71,7 +71,7 @@ router.get('/getCategory', async function(req, res, next) {
   }
 });
 
-router.get('/scenes', async function(req, res, next) {
+router.get('/scenesv2', async function(req, res, next) {
   try {
     res.json(await categories.getScenesV2(req.query.page,req.query.name,req.query.order));
   } catch (err) {
@@ -80,7 +80,7 @@ router.get('/scenes', async function(req, res, next) {
   }
 });
 
-router.post('/newCategory', helper.isLoggedIn, async function (req, res, next) {
+router.post('/newCategoryv2', helper.isLoggedIn, async function (req, res, next) {
   try {
     res.json(await categories.newCategoryV2(req.body.name));  
   } catch (error) {
@@ -88,7 +88,7 @@ router.post('/newCategory', helper.isLoggedIn, async function (req, res, next) {
   }
 });
 
-router.patch('/updateCategory', helper.isLoggedIn, async function (req, res, next) {
+router.patch('/updateCategoryv2', helper.isLoggedIn, async function (req, res, next) {
   try {
     res.json(await categories.updateCategoryV2(req.body.id,req.body.name));  
   } catch (error) {

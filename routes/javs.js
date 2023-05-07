@@ -73,7 +73,7 @@ router.patch('/updateJav', helper.isLoggedIn, async function (req, res, next) {
 
 /* New petitions V2 APP NUXT3 ---------------------------------------------------------------------------------------------------- */
 
-router.get('/', async function(req, res, next) {
+router.get('/v2', async function(req, res, next) {
   try {
     res.json(await javs.getMultipleV2(req.query.page,req.query.order));
   } catch (err) {
@@ -82,7 +82,7 @@ router.get('/', async function(req, res, next) {
   }
 });
 
-router.get('/jav', async function(req, res, next) {
+router.get('/javv2', async function(req, res, next) {
   try {
     res.json(await javs.getJavV2(req.query.code));
   } catch (err) {
@@ -91,7 +91,7 @@ router.get('/jav', async function(req, res, next) {
   }
 });
 
-router.get('/javId', async function(req, res, next) {
+router.get('/javIdv2', async function(req, res, next) {
   try {
     res.json(await javs.getJavIdV2(req.query.id));
   } catch (err) {
@@ -100,7 +100,7 @@ router.get('/javId', async function(req, res, next) {
   }
 });
 
-router.get('/newest', async function(req, res, next) {
+router.get('/newestv2', async function(req, res, next) {
   try {
     res.json(await javs.getNewestV2(req.query.limit));
   } catch (err) {
@@ -109,7 +109,7 @@ router.get('/newest', async function(req, res, next) {
   }
 });
 
-router.get('/getAll', async function(req, res, next) {
+router.get('/getAllv2', async function(req, res, next) {
   try {
     res.json(await javs.getAllV2());
   } catch (err) {
@@ -118,7 +118,7 @@ router.get('/getAll', async function(req, res, next) {
   }
 });
 
-router.post('/newJav', helper.isLoggedIn, async function (req, res, next) {
+router.post('/newJavv2', helper.isLoggedIn, async function (req, res, next) {
   try {
     res.json(await javs.newJavV2(req.body.title,req.body.code,req.body.image,req.body.hide,req.body.categories,req.body.idols));  
   } catch (error) {
@@ -126,7 +126,7 @@ router.post('/newJav', helper.isLoggedIn, async function (req, res, next) {
   }
 });
 
-router.patch('/updateJav', helper.isLoggedIn, async function (req, res, next) {
+router.patch('/updateJavv2', helper.isLoggedIn, async function (req, res, next) {
   try {
     res.json(await javs.updateJavV2(req.body.id,req.body.title,req.body.code,req.body.image,req.body.hide,req.body.categories,req.body.idols, req.body.scenes));  
   } catch (error) {
