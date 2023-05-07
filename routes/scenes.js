@@ -146,4 +146,137 @@ router.patch('/updateScene', helper.isLoggedIn, async function (req, res, next) 
   }
 });
 
+/* New petitions V2 APP NUXT3 ---------------------------------------------------------------------------------------------------- */
+
+router.get('/', async function (req, res, next) {
+  try {
+    res.json(await Scene.getMultipleV2(req.query.page, req.query.order));
+  } catch (err) {
+    console.error(`Error while getting Scene `, err.message);
+    next(err);
+  }
+});
+
+router.get('/scene', async function (req, res, next) {
+  try {
+    res.json(await Scene.getSceneV2(req.query.code));
+  } catch (err) {
+    console.error(`Error while getting Scene `, err.message);
+    next(err);
+  }
+});
+
+router.get('/scenesRandom', async function (req, res, next) {
+  try {
+    res.json(await Scene.getScenesRandomV2(req.query.limit));
+  } catch (err) {
+    console.error(`Error while getting Scenes `, err.message);
+    next(err);
+  }
+});
+
+router.get('/scenes', async function (req, res, next) {
+  try {
+    res.json(await Scene.getScenesV2(req.query.limit, req.query.order));
+  } catch (err) {
+    console.error(`Error while getting Scenes `, err.message);
+    next(err);
+  }
+});
+
+router.get('/sceneId', async function (req, res, next) {
+  try {
+    res.json(await Scene.getSceneIdV2(req.query.id));
+  } catch (err) {
+    console.error(`Error while getting Scene `, err.message);
+    next(err);
+  }
+});
+
+router.get('/relatedScenes', async function (req, res, next) {
+  try {
+    res.json(await Scene.getRelatedScenesV2(req.query.id, req.query.limit));
+  } catch (err) {
+    console.error(`Error while getting related Scenes `, err.message);
+    next(err);
+  }
+});
+
+
+router.get('/byviews', async function (req, res, next) {
+  try {
+    res.json(await Scene.getMostViewedV2(req.query.limit));
+  } catch (err) {
+    console.error(`Error while getting Scene `, err.message);
+    next(err);
+  }
+});
+
+router.get('/getAll', async function (req, res, next) {
+  try {
+    res.json(await Scene.getAllV2());
+  } catch (err) {
+    console.error(`Error while getting Scenes `, err.message);
+    next(err);
+  }
+});
+
+router.get('/newView', async function (req, res, next) {
+  try {
+    res.json(await Scene.getViewV2(req.query.id));
+  } catch (err) {
+    console.error(`Error while creating view of Scene `, err.message);
+    next(err);
+  }
+});
+
+router.post('/newScene', helper.isLoggedIn, async function (req, res, next) {
+  try {
+    res.json(await Scene.newSceneV2(
+      req.body.title,
+      req.body.code,
+      req.body.video,
+      req.body.duration,
+      req.body.hide,
+      req.body.previewImage,
+      req.body.staticImage,
+      req.body.vtt,
+      req.body.video480p,
+      req.body.categories,
+      req.body.idols));
+  } catch (error) {
+    next(error)
+  }
+});
+
+router.delete('/deleteScene', helper.isLoggedIn, async function (req, res, next) {
+  try {
+    res.json(await Scene.deleteSceneV2(
+      req.body.code));
+  } catch (error) {
+    next(error)
+  }
+});
+
+router.patch('/updateScene', helper.isLoggedIn, async function (req, res, next) {
+  try {
+    res.json(await Scene.updateSceneV2(
+      req.body.id,
+      req.body.title,
+      req.body.code,
+      req.body.video,
+      req.body.duration,
+      req.body.hide,
+      req.body.previewImage,
+      req.body.staticImage,
+      req.body.vtt,
+      req.body.video480p,
+      req.body.categories,
+      req.body.idols
+    ));
+  } catch (error) {
+    next(error)
+  }
+});
+
 module.exports = router;

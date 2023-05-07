@@ -12,6 +12,15 @@ async function getMostViewed(limit = 1) {
     }
 }
 
+async function getMostViewedV2(limit = 1) {
+    const rows = await db.query(
+        `SELECT s.*, COUNT(sv.sceneId) as totalViews  from SceneView sv join Scene s ON sv.sceneId = s.id WHERE sv.creation between date_sub(now(),INTERVAL 1 WEEK) and now() GROUP by sv.sceneId order by totalViews desc limit 0,${limit}`
+    );
+    return{
+        Scenes : helper.emptyOrRows(rows)
+    }
+}
+
 async function getMultiple(page = 1, order = 'desc') {
     const offset = helper.getOffset(page, config.listPerPageScenes);
     if (order != 'desc' && order != 'asc') {
@@ -33,6 +42,26 @@ async function getMultiple(page = 1, order = 'desc') {
     }
 }
 
+async function getMultipleV2(page = 1, order = 'desc') {
+    const offset = helper.getOffset(page, config.listPerPageScenes);
+    if (order != 'desc' && order != 'asc') {
+        order = 'desc'
+    }
+    const rows = await db.query(
+        `SELECT * FROM Scene WHERE hide = 0  order by id ${order} LIMIT ${offset},${config.listPerPageScenes}`
+    );
+    const maxRows = await db.query(
+        `SELECT * FROM Scene WHERE hide = 0 `
+    );
+    const pagesData = helper.getCountPages(page,config.listPerPageScenes,maxRows.length);
+    const meta = { page : page, nextPage: pagesData.nextPage, lastPage: pagesData.lastPage };
+
+    return {
+        Scenes : helper.emptyOrRows(rows),
+        meta
+    }
+}
+
 async function getScenes(limit = 1, order = 'desc') {
     const rows = await db.query(
         `SELECT * FROM Scene WHERE hide = 0  order by id ${order} LIMIT 0,${limit}`
@@ -40,6 +69,15 @@ async function getScenes(limit = 1, order = 'desc') {
     const data = {Scenes : helper.emptyOrRows(rows)};
     return {
         data
+    }
+}
+
+async function getScenesV2(limit = 1, order = 'desc') {
+    const rows = await db.query(
+        `SELECT * FROM Scene WHERE hide = 0  order by id ${order} LIMIT 0,${limit}`
+    );
+    return {
+        Scenes : helper.emptyOrRows(rows)
     }
 }
 
@@ -53,6 +91,15 @@ async function getScenesRandom(limit = 1) {
     }
 }
 
+async function getScenesRandomV2(limit = 1) {
+    const rows = await db.query(
+        `SELECT * FROM Scene WHERE hide = 0  order by RAND() LIMIT 0,${limit}`
+    );
+    return {
+        Scenes : helper.emptyOrRows(rows)
+    }
+}
+
 async function getRelatedScenes(id = 1, limit = 1) {
     const rows = await db.query(
         `SELECT s.*, (SELECT count(c1.id) FROM Category c1 JOIN SceneCategory sc1 ON c1.id = sc1.categoryId WHERE sc1.sceneId = s.id and c1.id
@@ -63,6 +110,18 @@ async function getRelatedScenes(id = 1, limit = 1) {
     const data = {Scenes : helper.emptyOrRows(rows)};
     return {
         data
+    }
+}
+
+async function getRelatedScenesV2(id = 1, limit = 1) {
+    const rows = await db.query(
+        `SELECT s.*, (SELECT count(c1.id) FROM Category c1 JOIN SceneCategory sc1 ON c1.id = sc1.categoryId WHERE sc1.sceneId = s.id and c1.id
+        IN 
+        (SELECT c2.id FROM Category c2 JOIN SceneCategory sc2 ON c2.id = sc2.categoryId WHERE sc2.sceneId = ${id})) as matchCount 
+        from Scene s where id <> ${id} order by matchCount desc, s.creation desc limit ${limit} `
+    );
+    return {
+        Scenes : helper.emptyOrRows(rows)
     }
 }
 
@@ -92,6 +151,28 @@ async function getScene(code = 'AAA-000_001') {
     }
 }
 
+async function getSceneV2(code = 'AAA-000_001') {
+    const rowsScene = await db.query(
+        `SELECT * FROM Scene s where s.code = '${code}'`
+    );
+    const rowsCategories = await db.query(
+        `SELECT * from Category c join SceneCategory sc on c.id = sc.categoryId where sc.sceneId  = (SELECT id FROM Scene s where s.code = '${code}')`
+    );
+    const rowsJav = await db.query(
+        `Select * from Jav j join JavScene js on j.id = js.javId where js.sceneId = (SELECT id FROM Scene s where s.code = '${code}')`
+    );
+    const rowsIdols = await db.query(
+        `Select * from Idol i join SceneIdol si on i.id = si.idolId  where si.sceneId = (SELECT id FROM Scene s where s.code = '${code}')`
+    );
+
+    return {
+        Scene: helper.emptyOrRows(rowsScene),
+        Categories : helper.emptyOrRows(rowsCategories),
+        Jav : helper.emptyOrRows(rowsJav),
+        Idols : helper.emptyOrRows(rowsIdols)
+    }
+}
+
 async function getSceneId(id = 0) {
     const rowsScene = await db.query(
         `SELECT * FROM Scene s where s.id = ${id}`
@@ -114,6 +195,24 @@ async function getSceneId(id = 0) {
     }
 }
 
+async function getSceneIdV2(id = 0) {
+    const rowsScene = await db.query(
+        `SELECT * FROM Scene s where s.id = ${id}`
+    );
+    const rowsCategories = await db.query(
+        `SELECT * from Category c join SceneCategory sc on c.id = sc.categoryId where sc.sceneId  = ${id}`
+    );
+    const rowsIdols = await db.query(
+        `Select * from Idol i join SceneIdol si on i.id = si.idolId  where si.sceneId = ${id}`
+    );
+
+    return {
+        Scene: helper.emptyOrRows(rowsScene[0]),
+        Categories : helper.emptyOrRows(rowsCategories),
+        Idols : helper.emptyOrRows(rowsIdols)
+    }
+}
+
 async function getAll() {
     const rows = await db.query(
         `select * from Scene s order by code`
@@ -121,6 +220,15 @@ async function getAll() {
     const data = {Scenes: helper.emptyOrRows(rows)};
     return{
         data
+    }
+}
+
+async function getAllV2() {
+    const rows = await db.query(
+        `select * from Scene s order by code`
+    );
+    return{
+        Scenes: helper.emptyOrRows(rows)
     }
 }
 
@@ -175,7 +283,76 @@ async function newScene(title = 'error', code = 'error', video = 'error', durati
     }    
 }
 
+async function newSceneV2(title = 'error', code = 'error', video = 'error', duration = 'error', hide = 1, previewImage = '', staticImage = '', vtt = '', video480p = '', categories = [],idols = []) {
+    const rows = await db.query(
+        `SELECT * FROM Scene where code = '${code}'`
+    );
+    const data = { Scenes : helper.emptyOrRows(rows) };
+
+    const arrayString = code.split('_');
+
+    const javFind = await db.query(
+        `SELECT * FROM Jav where code = '${arrayString[0]}'`
+    );
+
+    const dataJav = { Jav : helper.emptyOrRows(javFind) };
+
+    if (data.Scenes.length == 0 && dataJav.Jav.length > 0) {
+        
+        const result = await db.query(
+            `INSERT INTO Scene (title,code,video,duration,hide,previewImage,staticImage,vtt,video480p) VALUES ('${title}','${code}','${video}','${duration}',${hide},'${previewImage}','${staticImage}','${vtt}','${video480p}')`
+        );    
+        const newRows = await db.query(
+            `SELECT * FROM Scene where id = '${result.insertId}'`
+        );
+        
+        categories.forEach(async category => {
+            const resultCategory = await db.query(
+                `INSERT INTO SceneCategory (sceneId,categoryId) VALUES (${result.insertId},${category})`
+            ); 
+        });
+
+        idols.forEach(async idol => {
+            const resultIdol = await db.query(
+                `INSERT INTO SceneIdol (sceneId,idolId) VALUES (${result.insertId},${idol})`
+            ); 
+        });
+
+        const javFind = await db.query(
+            `INSERT INTO JavScene (javId, sceneId) VALUES (${dataJav.Jav[0].id},${result.insertId})`
+        );
+
+        return {
+            Scene : helper.emptyOrRows(newRows), meta: result
+        }
+    }else{
+        return {
+            error: 'Duplicated Scene code!'
+        }
+    }    
+}
+
 async function deleteScene(code = 'error') {
+    const rows = await db.query(
+        `SELECT * FROM Scene where code = '${code}'`
+    );
+    const data = { Scenes : helper.emptyOrRows(rows) };
+
+    if (data.Scenes.length == 1) {
+        const result = await db.query(
+            `DELETE FROM Scene WHERE code = '${code}'`
+        );    
+        return {
+            meta: result
+        }
+    }else{
+        return {
+            error: 'Scene code does not exist or it is not unique!'
+        }
+    }    
+}
+
+async function deleteSceneV2(code = 'error') {
     const rows = await db.query(
         `SELECT * FROM Scene where code = '${code}'`
     );
@@ -246,6 +423,55 @@ async function updateScene(id = 0, title = 'error', code = 'error', video = 'err
     }    
 }
 
+async function updateSceneV2(id = 0, title = 'error', code = 'error', video = 'error', duration = 'error', hide = 1, previewImage = '', staticImage = '', vtt = '', video480p = '', categories = [],idols = []) {    
+    const rows = await db.query(
+        `SELECT * FROM Scene where id = ${id}`
+    );
+    const data = { Scenes : helper.emptyOrRows(rows) };
+
+    const rows2 = await db.query(
+        `SELECT * FROM Scene where code = '${code}'`
+    );
+    const data2 = { Scenes : helper.emptyOrRows(rows2) };
+
+    if (data.Scenes.length > 0 && (data2.Scenes.length == 0 || data.Scenes[0].id == data2.Scenes[0].id)) {
+        const result = await db.query(
+            `UPDATE Scene set title = '${title}', code = '${code}', video = '${video}', duration = '${duration}', hide = ${hide}, previewImage = '${previewImage}', staticImage = '${staticImage}', vtt = '${vtt}', video480p = '${video480p}' WHERE id = ${id}`
+        );    
+        const newRows = await db.query(
+            `SELECT * FROM Scene where id = ${id}`
+        );
+        
+        const deleteCategories = await db.query(
+            `DELETE FROM SceneCategory WHERE sceneId = ${id}`
+        );    
+
+        categories.forEach(async category => {
+            const resultCategory = await db.query(
+                `INSERT INTO SceneCategory (sceneId,categoryId) VALUES (${id},${category.id})`
+            ); 
+        });
+
+        const deleteIdol = await db.query(
+            `DELETE FROM SceneIdol WHERE sceneId = ${id}`
+        );    
+
+        idols.forEach(async idol => {
+            const resultIdol = await db.query(
+                `INSERT INTO SceneIdol (sceneId,idolId) VALUES (${id},${idol.id})`
+            ); 
+        });
+        
+        return {
+            Scene : helper.emptyOrRows(newRows), meta: result
+        }
+    }else{
+        return {
+            error: 'Duplicated Scene code or ID does not exist!'
+        }
+    }    
+}
+
 async function getView(id = 0) {
     const rows = await db.query(
         `INSERT INTO SceneView (sceneId) VALUES (${id})`
@@ -253,6 +479,15 @@ async function getView(id = 0) {
     const data = helper.emptyOrRows(rows);
     return{
         data
+    }
+}
+
+async function getViewV2(id = 0) {
+    const rows = await db.query(
+        `INSERT INTO SceneView (sceneId) VALUES (${id})`
+    );
+    return{
+        result : helper.emptyOrRows(rows)
     }
 }
 
@@ -268,5 +503,17 @@ module.exports = {
     updateScene,
     getView,
     getRelatedScenes,
-    getScenesRandom
+    getScenesRandom,
+    getMostViewedV2,
+    getMultipleV2,
+    getSceneV2,
+    getScenesV2,
+    getSceneIdV2,
+    getAllV2,
+    newSceneV2,
+    deleteSceneV2,
+    updateSceneV2,
+    getViewV2,
+    getRelatedScenesV2,
+    getScenesRandomV2
 }

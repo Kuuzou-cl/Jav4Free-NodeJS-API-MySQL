@@ -71,4 +71,67 @@ router.patch('/updateJav', helper.isLoggedIn, async function (req, res, next) {
   }
 });
 
+/* New petitions V2 APP NUXT3 ---------------------------------------------------------------------------------------------------- */
+
+router.get('/', async function(req, res, next) {
+  try {
+    res.json(await javs.getMultipleV2(req.query.page,req.query.order));
+  } catch (err) {
+    console.error(`Error while getting Javs `, err.message);
+    next(err);
+  }
+});
+
+router.get('/jav', async function(req, res, next) {
+  try {
+    res.json(await javs.getJavV2(req.query.code));
+  } catch (err) {
+    console.error(`Error while getting newest Javs `, err.message);
+    next(err);
+  }
+});
+
+router.get('/javId', async function(req, res, next) {
+  try {
+    res.json(await javs.getJavIdV2(req.query.id));
+  } catch (err) {
+    console.error(`Error while getting newest Javs `, err.message);
+    next(err);
+  }
+});
+
+router.get('/newest', async function(req, res, next) {
+  try {
+    res.json(await javs.getNewestV2(req.query.limit));
+  } catch (err) {
+    console.error(`Error while getting newest Javs `, err.message);
+    next(err);
+  }
+});
+
+router.get('/getAll', async function(req, res, next) {
+  try {
+    res.json(await javs.getAllV2());
+  } catch (err) {
+    console.error(`Error while getting Javs `, err.message);
+    next(err);
+  }
+});
+
+router.post('/newJav', helper.isLoggedIn, async function (req, res, next) {
+  try {
+    res.json(await javs.newJavV2(req.body.title,req.body.code,req.body.image,req.body.hide,req.body.categories,req.body.idols));  
+  } catch (error) {
+    next(error)
+  }
+});
+
+router.patch('/updateJav', helper.isLoggedIn, async function (req, res, next) {
+  try {
+    res.json(await javs.updateJavV2(req.body.id,req.body.title,req.body.code,req.body.image,req.body.hide,req.body.categories,req.body.idols, req.body.scenes));  
+  } catch (error) {
+    next(error)
+  }
+});
+
 module.exports = router;

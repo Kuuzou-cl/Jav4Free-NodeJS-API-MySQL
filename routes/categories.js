@@ -51,4 +51,49 @@ router.patch('/updateCategory', helper.isLoggedIn, async function (req, res, nex
   }
 });
 
+/* New petitions V2 APP NUXT3 ---------------------------------------------------------------------------------------------------- */
+
+router.get('/', async function(req, res, next) {
+  try {
+    res.json(await categories.getAllV2());
+  } catch (err) {
+    console.error(`Error while getting Categories `, err.message);
+    next(err);
+  }
+});
+
+router.get('/getCategory', async function(req, res, next) {
+  try {
+    res.json(await categories.getCategoryV2(req.query.id));
+  } catch (err) {
+    console.error(`Error while getting Category `, err.message);
+    next(err);
+  }
+});
+
+router.get('/scenes', async function(req, res, next) {
+  try {
+    res.json(await categories.getScenesV2(req.query.page,req.query.name,req.query.order));
+  } catch (err) {
+    console.error(`Error while getting Categories `, err.message);
+    next(err);
+  }
+});
+
+router.post('/newCategory', helper.isLoggedIn, async function (req, res, next) {
+  try {
+    res.json(await categories.newCategoryV2(req.body.name));  
+  } catch (error) {
+    next(error)
+  }
+});
+
+router.patch('/updateCategory', helper.isLoggedIn, async function (req, res, next) {
+  try {
+    res.json(await categories.updateCategoryV2(req.body.id,req.body.name));  
+  } catch (error) {
+    next(error)
+  }
+});
+
 module.exports = router;
