@@ -13,9 +13,9 @@ async function getMultiple(page = 1, order = 'desc') {
     const maxRows = await db.query(
         `SELECT * FROM Jav WHERE hide = 0 `
     );
-    const pagesData = helper.getCountPages(page,config.listPerPageJavs,maxRows.length);
-    const data = { Javs : helper.emptyOrRows(rows) };
-    const meta = { page : page, nextPage: pagesData.nextPage, lastPage: pagesData.lastPage };
+    const pagesData = helper.getCountPages(page, config.listPerPageJavs, maxRows.length);
+    const data = { Javs: helper.emptyOrRows(rows) };
+    const meta = { page: page, nextPage: pagesData.nextPage, lastPage: pagesData.lastPage };
 
     return {
         data,
@@ -34,11 +34,11 @@ async function getMultipleV2(page = 1, order = 'desc') {
     const maxRows = await db.query(
         `SELECT * FROM Jav WHERE hide = 0 `
     );
-    const pagesData = helper.getCountPages(page,config.listPerPageJavs,maxRows.length);
-    const meta = { page : page, nextPage: pagesData.nextPage, lastPage: pagesData.lastPage };
+    const pagesData = helper.getCountPages(page, config.listPerPageJavs, maxRows.length);
+    const meta = { page: page, nextPage: pagesData.nextPage, lastPage: pagesData.lastPage };
 
     return {
-        Javs : helper.emptyOrRows(rows),
+        Javs: helper.emptyOrRows(rows),
         meta
     }
 }
@@ -47,12 +47,12 @@ async function getNewest(limit = 1) {
     const rows = await db.query(
         `SELECT * FROM Jav WHERE hide = 0 order by id desc LIMIT 0,${limit}`
     );
-    const data = 
+    const data =
     {
-        Javs : helper.emptyOrRows(rows)
+        Javs: helper.emptyOrRows(rows)
     };
 
-    return{
+    return {
         data
     }
 }
@@ -62,8 +62,25 @@ async function getNewestV2(limit = 1) {
         `SELECT * FROM Jav WHERE hide = 0 order by id desc LIMIT 0,${limit}`
     );
 
-    return{
-        Javs : helper.emptyOrRows(rows)
+    const tempId = []
+    rows.forEach(element => {
+        tempId.push(element.id);
+    });
+
+    let rowsCategories = [];
+
+    for (let index = 0; index < tempId.length; index++) {
+        rowsCategories.push(helper.emptyOrRows(await db.query(
+            `SELECT c.id, c.name FROM Category c join JavCategory jc on c.id = jc.categoryId and jc.javId = ${tempId[index]} ORDER BY RAND() LIMIT 0,3`
+        )));
+    }
+
+    for (let index = 0; index < rows.length; index++) {
+        rows[index].categories = rowsCategories[index];
+    }
+
+    return {
+        Javs: helper.emptyOrRows(rows)
     }
 }
 
@@ -71,12 +88,12 @@ async function getAll() {
     const rows = await db.query(
         `SELECT * FROM Jav order by code`
     );
-    const data = 
+    const data =
     {
-        Javs : helper.emptyOrRows(rows)
+        Javs: helper.emptyOrRows(rows)
     };
 
-    return{
+    return {
         data
     }
 }
@@ -86,8 +103,8 @@ async function getAllV2() {
         `SELECT * FROM Jav order by code`
     );
 
-    return{
-        Javs : helper.emptyOrRows(rows)
+    return {
+        Javs: helper.emptyOrRows(rows)
     }
 }
 
@@ -105,12 +122,12 @@ async function getJav(code = 'AAA-000') {
         `SELECT * from Idol i join JavIdol ji on ji.idolId = i.id WHERE ji.javId = (SELECT id FROM Jav j where j.code = '${code}')`
     );
     const data = {
-        Jav : helper.emptyOrRows(rowsJav),
-        Categories : helper.emptyOrRows(rowsCategories),
-        Scenes : helper.emptyOrRows(rowsScenes),
-        Idols : helper.emptyOrRows(rowsIdols)
+        Jav: helper.emptyOrRows(rowsJav),
+        Categories: helper.emptyOrRows(rowsCategories),
+        Scenes: helper.emptyOrRows(rowsScenes),
+        Idols: helper.emptyOrRows(rowsIdols)
     };
-    return{
+    return {
         data
     }
 }
@@ -128,11 +145,11 @@ async function getJavV2(code = 'AAA-000') {
     const rowsIdols = await db.query(
         `SELECT * from Idol i join JavIdol ji on ji.idolId = i.id WHERE ji.javId = (SELECT id FROM Jav j where j.code = '${code}')`
     );
-    return{
-        Jav : helper.emptyOrRows(rowsJav),
-        Categories : helper.emptyOrRows(rowsCategories),
-        Scenes : helper.emptyOrRows(rowsScenes),
-        Idols : helper.emptyOrRows(rowsIdols)
+    return {
+        Jav: helper.emptyOrRows(rowsJav),
+        Categories: helper.emptyOrRows(rowsCategories),
+        Scenes: helper.emptyOrRows(rowsScenes),
+        Idols: helper.emptyOrRows(rowsIdols)
     }
 }
 
@@ -150,12 +167,12 @@ async function getJavId(id = 0) {
         `SELECT * from Idol i join JavIdol ji on ji.idolId = i.id WHERE ji.javId = ${id}`
     );
     const data = {
-        Jav : helper.emptyOrRows(rowsJav[0]),
-        Categories : helper.emptyOrRows(rowsCategories),
-        Scenes : helper.emptyOrRows(rowsScenes),
-        Idols : helper.emptyOrRows(rowsIdols)
+        Jav: helper.emptyOrRows(rowsJav[0]),
+        Categories: helper.emptyOrRows(rowsCategories),
+        Scenes: helper.emptyOrRows(rowsScenes),
+        Idols: helper.emptyOrRows(rowsIdols)
     };
-    return{
+    return {
         data
     }
 }
@@ -174,205 +191,205 @@ async function getJavIdV2(id = 0) {
         `SELECT * from Idol i join JavIdol ji on ji.idolId = i.id WHERE ji.javId = ${id}`
     );
 
-    return{
-        Jav : helper.emptyOrRows(rowsJav[0]),
-        Categories : helper.emptyOrRows(rowsCategories),
-        Scenes : helper.emptyOrRows(rowsScenes),
-        Idols : helper.emptyOrRows(rowsIdols)
+    return {
+        Jav: helper.emptyOrRows(rowsJav[0]),
+        Categories: helper.emptyOrRows(rowsCategories),
+        Scenes: helper.emptyOrRows(rowsScenes),
+        Idols: helper.emptyOrRows(rowsIdols)
     }
 }
 
-async function newJav(title = 'error',code = 'error',image = 'error',hide = 1,categories = [],idols = []) {
+async function newJav(title = 'error', code = 'error', image = 'error', hide = 1, categories = [], idols = []) {
     const rows = await db.query(
         `SELECT * FROM Jav where code = '${code}'`
     );
-    const data = { Javs : helper.emptyOrRows(rows) };
+    const data = { Javs: helper.emptyOrRows(rows) };
 
     if (data.Javs.length == 0) {
         const result = await db.query(
             `INSERT INTO Jav (title,code,image,hide) VALUES ('${title}','${code}','${image}',${hide})`
-        );    
+        );
         const newRows = await db.query(
             `SELECT * FROM Jav where id = '${result.insertId}'`
         );
-        
-        const newData = { Jav : helper.emptyOrRows(newRows) };
+
+        const newData = { Jav: helper.emptyOrRows(newRows) };
 
         categories.forEach(async category => {
             const resultCategory = await db.query(
                 `INSERT INTO JavCategory (javId,categoryId) VALUES (${result.insertId},${category})`
-            ); 
+            );
         });
 
         idols.forEach(async idol => {
             const resultIdol = await db.query(
                 `INSERT INTO JavIdol (javId,idolId) VALUES (${result.insertId},${idol})`
-            ); 
+            );
         });
         return {
             data: newData, meta: result
         }
-    }else{
+    } else {
         return {
             error: 'Duplicated Jav code!'
         }
-    }    
+    }
 }
 
-async function newJavV2(title = 'error',code = 'error',image = 'error',hide = 1,categories = [],idols = []) {
+async function newJavV2(title = 'error', code = 'error', image = 'error', hide = 1, categories = [], idols = []) {
     const rows = await db.query(
         `SELECT * FROM Jav where code = '${code}'`
     );
-    const data = { Javs : helper.emptyOrRows(rows) };
+    const data = { Javs: helper.emptyOrRows(rows) };
 
     if (data.Javs.length == 0) {
         const result = await db.query(
             `INSERT INTO Jav (title,code,image,hide) VALUES ('${title}','${code}','${image}',${hide})`
-        );    
+        );
         const newRows = await db.query(
             `SELECT * FROM Jav where id = '${result.insertId}'`
         );
-        
+
         categories.forEach(async category => {
             const resultCategory = await db.query(
                 `INSERT INTO JavCategory (javId,categoryId) VALUES (${result.insertId},${category})`
-            ); 
+            );
         });
 
         idols.forEach(async idol => {
             const resultIdol = await db.query(
                 `INSERT INTO JavIdol (javId,idolId) VALUES (${result.insertId},${idol})`
-            ); 
+            );
         });
         return {
-            Jav : helper.emptyOrRows(newRows), meta: result
+            Jav: helper.emptyOrRows(newRows), meta: result
         }
-    }else{
+    } else {
         return {
             error: 'Duplicated Jav code!'
         }
-    }    
+    }
 }
 
-async function updateJav(id = 0, title = 'error',code = 'error',image = 'error',hide = 1,categories = [],idols = [], scenes = []) {
+async function updateJav(id = 0, title = 'error', code = 'error', image = 'error', hide = 1, categories = [], idols = [], scenes = []) {
     const rows = await db.query(
         `SELECT * FROM Jav where id = ${id}`
     );
-    const data = { Javs : helper.emptyOrRows(rows) };
+    const data = { Javs: helper.emptyOrRows(rows) };
 
     const rows2 = await db.query(
         `SELECT * FROM Jav where code = '${code}'`
     );
-    const data2 = { Javs : helper.emptyOrRows(rows2) };
+    const data2 = { Javs: helper.emptyOrRows(rows2) };
 
     if (data.Javs.length > 0 && (data2.Javs.length == 0 || data.Javs[0].id == data2.Javs[0].id)) {
         const result = await db.query(
             `UPDATE Jav set title = '${title}', code = '${code}', image = '${image}', hide = ${hide} WHERE id = ${id}`
-        );    
+        );
         const newRows = await db.query(
             `SELECT * FROM Jav where id = ${id}`
         );
-        
-        const newData = { Jav : helper.emptyOrRows(newRows) };
+
+        const newData = { Jav: helper.emptyOrRows(newRows) };
 
         const deleteCategories = await db.query(
             `DELETE FROM JavCategory WHERE javId = ${id}`
-        );  
+        );
 
         categories.forEach(async category => {
             const resultCategory = await db.query(
                 `INSERT INTO JavCategory (javId,categoryId) VALUES (${id},${category.id})`
-            ); 
+            );
         });
 
         const deleteIdol = await db.query(
             `DELETE FROM JavIdol WHERE javId = ${id}`
-        ); 
+        );
 
         idols.forEach(async idol => {
             const resultIdol = await db.query(
                 `INSERT INTO JavIdol (javId,idolId) VALUES (${id},${idol.id})`
-            ); 
+            );
         });
 
         const deleteScene = await db.query(
             `DELETE FROM JavScene WHERE javId = ${id}`
-        ); 
+        );
 
         scenes.forEach(async scene => {
             const resultScene = await db.query(
                 `INSERT INTO JavScene (javId,sceneId) VALUES (${id},${scene.id})`
-            ); 
+            );
         });
 
         return {
             data: newData, meta: result
         }
-    }else{
+    } else {
         return {
             error: 'Duplicated Jav code!'
         }
-    }    
+    }
 }
 
 
-async function updateJavV2(id = 0, title = 'error',code = 'error',image = 'error',hide = 1,categories = [],idols = [], scenes = []) {
+async function updateJavV2(id = 0, title = 'error', code = 'error', image = 'error', hide = 1, categories = [], idols = [], scenes = []) {
     const rows = await db.query(
         `SELECT * FROM Jav where id = ${id}`
     );
-    const data = { Javs : helper.emptyOrRows(rows) };
+    const data = { Javs: helper.emptyOrRows(rows) };
 
     const rows2 = await db.query(
         `SELECT * FROM Jav where code = '${code}'`
     );
-    const data2 = { Javs : helper.emptyOrRows(rows2) };
+    const data2 = { Javs: helper.emptyOrRows(rows2) };
 
     if (data.Javs.length > 0 && (data2.Javs.length == 0 || data.Javs[0].id == data2.Javs[0].id)) {
         const result = await db.query(
             `UPDATE Jav set title = '${title}', code = '${code}', image = '${image}', hide = ${hide} WHERE id = ${id}`
-        );    
+        );
         const newRows = await db.query(
             `SELECT * FROM Jav where id = ${id}`
         );
-        
+
         const deleteCategories = await db.query(
             `DELETE FROM JavCategory WHERE javId = ${id}`
-        );  
+        );
 
         categories.forEach(async category => {
             const resultCategory = await db.query(
                 `INSERT INTO JavCategory (javId,categoryId) VALUES (${id},${category.id})`
-            ); 
+            );
         });
 
         const deleteIdol = await db.query(
             `DELETE FROM JavIdol WHERE javId = ${id}`
-        ); 
+        );
 
         idols.forEach(async idol => {
             const resultIdol = await db.query(
                 `INSERT INTO JavIdol (javId,idolId) VALUES (${id},${idol.id})`
-            ); 
+            );
         });
 
         const deleteScene = await db.query(
             `DELETE FROM JavScene WHERE javId = ${id}`
-        ); 
+        );
 
         scenes.forEach(async scene => {
             const resultScene = await db.query(
                 `INSERT INTO JavScene (javId,sceneId) VALUES (${id},${scene.id})`
-            ); 
+            );
         });
 
         return {
-            Jav : helper.emptyOrRows(newRows), meta: result
+            Jav: helper.emptyOrRows(newRows), meta: result
         }
-    }else{
+    } else {
         return {
             error: 'Duplicated Jav code!'
         }
-    }    
+    }
 }
 
 module.exports = {
