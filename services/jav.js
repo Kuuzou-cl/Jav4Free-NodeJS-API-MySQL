@@ -31,6 +31,24 @@ async function getMultipleV2(page = 1, order = 'desc') {
     const rows = await db.query(
         `SELECT * FROM Jav WHERE hide = 0 order by id ${order} LIMIT ${offset},${config.listPerPageJavs}`
     );
+
+    const tempId = []
+    rows.forEach(element => {
+        tempId.push(element.id);
+    });
+
+    let rowsCategories = [];
+
+    for (let index = 0; index < tempId.length; index++) {
+        rowsCategories.push(helper.emptyOrRows(await db.query(
+            `SELECT c.id, c.name FROM Category c join JavCategory jc on c.id = jc.categoryId and jc.javId = ${tempId[index]} ORDER BY RAND() LIMIT 0,3`
+        )));
+    }
+
+    for (let index = 0; index < rows.length; index++) {
+        rows[index].categories = rowsCategories[index];
+    }
+
     const maxRows = await db.query(
         `SELECT * FROM Jav WHERE hide = 0 `
     );
