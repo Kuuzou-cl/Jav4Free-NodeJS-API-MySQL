@@ -134,4 +134,13 @@ router.patch('/updateJavv2', helper.isLoggedIn, async function (req, res, next) 
   }
 });
 
+router.get('/relatedJavsv2', async function (req, res, next) {
+  try {
+    res.json(await javs.getRelatedJavsV2(req.query.id, req.query.limit));
+  } catch (err) {
+    console.error(`Error while getting related Javs `, err.message);
+    next(err);
+  }
+});
+
 module.exports = router;

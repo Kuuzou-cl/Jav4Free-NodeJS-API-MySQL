@@ -410,6 +410,18 @@ async function updateJavV2(id = 0, title = 'error', code = 'error', image = 'err
     }
 }
 
+async function getRelatedJavsV2(id = 211, limit = 1) {
+    const rows = await db.query(
+        `SELECT j.*, (
+	        SELECT count(c1.id) FROM Category c1 JOIN JavCategory jc ON c1.id = jc.categoryId WHERE jc.javId = j.id and c1.id IN (
+		        SELECT c2.id FROM Category c2 JOIN JavCategory jc2 ON c2.id = jc2.categoryId WHERE jc2.javId = ${id})) as matchCount from Jav j where id <> ${id}
+        order by matchCount desc, j.creation desc limit ${limit}`
+    );
+    return {
+        Javs : helper.emptyOrRows(rows)
+    }
+}
+
 module.exports = {
     getMultiple,
     getNewest,
@@ -424,5 +436,6 @@ module.exports = {
     getAllV2,
     newJavV2,
     getJavIdV2,
-    updateJavV2
+    updateJavV2,
+    getRelatedJavsV2
 }
