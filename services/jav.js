@@ -417,6 +417,24 @@ async function getRelatedJavsV2(id = 211, limit = 1) {
 		        SELECT c2.id FROM Category c2 JOIN JavCategory jc2 ON c2.id = jc2.categoryId WHERE jc2.javId = ${id})) as matchCount from Jav j where id <> ${id}
         order by matchCount desc, j.creation desc limit ${limit}`
     );
+
+    const tempId = []
+    rows.forEach(element => {
+        tempId.push(element.id);
+    });
+
+    let rowsCategories = [];
+
+    for (let index = 0; index < tempId.length; index++) {
+        rowsCategories.push(helper.emptyOrRows(await db.query(
+            `SELECT c.id, c.name FROM Category c join JavCategory jc on c.id = jc.categoryId and jc.javId = ${tempId[index]} ORDER BY RAND() LIMIT 0,3`
+        )));
+    }
+
+    for (let index = 0; index < rows.length; index++) {
+        rows[index].categories = rowsCategories[index];
+    }
+
     return {
         Javs : helper.emptyOrRows(rows)
     }
