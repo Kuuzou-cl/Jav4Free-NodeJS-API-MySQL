@@ -44,12 +44,23 @@ async function getMultiple(page = 1, order = 'desc') {
 
 async function getMultipleV2(page = 1, order = 'desc') {
     const offset = helper.getOffset(page, config.listPerPageScenes);
-    if (order != 'desc' && order != 'asc') {
-        order = 'desc'
+
+    if (order != 'Latest' && order != 'Oldest' && order != 'Trending' && order != 'Top view') {
+        order = 'Latest';
     }
-    const rows = await db.query(
-        `SELECT * FROM Scene WHERE hide = 0  order by id ${order} LIMIT ${offset},${config.listPerPageScenes}`
-    );
+
+    let rows;
+
+    if (order == 'Latest') {
+        rows = await db.query(`SELECT * FROM Scene WHERE hide = 0  order by id desc LIMIT ${offset},${config.listPerPageScenes}`);
+    } else if (order == 'Oldest') {
+        rows = await db.query(`SELECT * FROM Scene WHERE hide = 0  order by id asc LIMIT ${offset},${config.listPerPageScenes}`);
+    } else if (order == 'Trending') {
+        rows = await db.query(`SELECT s.*, COUNT(sv.sceneId) as viewScene  FROM Scene s join SceneView sv on s.id = sv.sceneId WHERE s.hide = 0 and sv.creation between date_sub(now(),INTERVAL 1 WEEK) and now() GROUP by sv.sceneId order by viewScene desc LIMIT ${offset},${config.listPerPageScenes}`);
+    } else if (order == 'Top view') {
+        rows = await db.query(`SELECT s.*, COUNT(sv.sceneId) as viewScene  FROM Scene s join SceneView sv on s.id = sv.sceneId WHERE s.hide = 0 GROUP by sv.sceneId order by viewScene desc LIMIT ${offset},${config.listPerPageScenes}`);
+    }
+
     const maxRows = await db.query(
         `SELECT * FROM Scene WHERE hide = 0 `
     );
