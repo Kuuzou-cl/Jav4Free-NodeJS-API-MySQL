@@ -109,8 +109,16 @@ async function getSearchV2(title, page = 1) {
         }
     }
 
+    const pagesData = helper.getCountPages(page,config.listPerPageScenes,rows.length);
+    const meta = { page : page, nextPage: pagesData.nextPage, lastPage: pagesData.lastPage };
+
+    if (rows.length > 0) {
+        rows = rows.slice((page - 1) * config.listPerPageScenes,(config.listPerPageScenes * page))
+    }
+
     return {
-        Scenes : helper.emptyOrRows(rows)
+        Scenes : helper.emptyOrRows(rows),
+        meta
     }
 }
 
