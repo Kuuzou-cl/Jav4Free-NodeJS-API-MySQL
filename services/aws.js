@@ -17,8 +17,8 @@ async function getAll() {
     try {
         let objectsS3 = [];
         let continuationToken;
-        let continueWhile =true;
-        
+        let continueWhile = true;
+
         while (continueWhile) {
             let filesS3 = await s3.listObjectsV2({ Bucket: 'jav4free-s3-data', ContinuationToken: continuationToken }).promise();
             objectsS3.push(...filesS3.Contents.map(file => file.Key));
@@ -99,7 +99,7 @@ async function getAll() {
                 }
             }
             for (let index = 0; index < spriteObjects.length; index++) {
-                if ("sprites/" + row.code + "_sprite.jpg" == spriteObjects[index]) {                    
+                if ("sprites/" + row.code + "_sprite.jpg" == spriteObjects[index]) {
                     row.videoSprite = true;
                     break;
                 }
@@ -122,8 +122,8 @@ async function getAllNotDB() {
     try {
         let objectsS3 = [];
         let continuationToken;
-        let continueWhile =true;
-        
+        let continueWhile = true;
+
         while (continueWhile) {
             let filesS3 = await s3.listObjectsV2({ Bucket: 'jav4free-s3-data', ContinuationToken: continuationToken }).promise();
             objectsS3.push(...filesS3.Contents.map(file => file.Key));
@@ -197,7 +197,26 @@ async function getAllNotDB() {
     }
 }
 
+async function getStateFilesPublished(page = 1) {
+    const offset = helper.getOffset(page, config.listPerPageScenes);
+    const perPage = config.listPerPageScenes;
+    const query = "SELECT s.id, s.code, s.hide, IFNULL((SELECT ss.description FROM S3_Scenes ss WHERE ss.description = s.code), 'false') as video720, IFNULL((SELECT ss.description FROM S3_Scenes480 ss WHERE ss.description = s.code), 'false') as video480, IFNULL((SELECT ss.description FROM S3_ScenesPreview ss WHERE ss.description = s.code), 'false') as videoPreview, IFNULL((SELECT ss.description FROM S3_ScenesSprite ss WHERE ss.description = s.code), 'false') as videoSprite, IFNULL((SELECT ss.description FROM S3_ScenesStatic ss WHERE ss.description = s.code), 'false') as videoStatic, IFNULL((SELECT ss.description FROM S3_ScenesVTT ss WHERE ss.description = s.code), 'false') as videoVTT FROM Scene s order by s.id desc LIMIT ?,?"
+    const rows = await db.query(query,[offset + "", perPage + ""]);
+
+    const maxRows = await db.query(
+        `SELECT * FROM Scene WHERE hide = 0 `
+    );
+
+    const pagesData = helper.getCountPages(page,config.listPerPageScenes,maxRows.length);
+    const meta = { page : page, nextPage: pagesData.nextPage, lastPage: pagesData.lastPage };
+    return {
+        Scenes : helper.emptyOrRows(rows),
+        meta
+    }
+}
+
 module.exports = {
     getAll,
-    getAllNotDB
+    getAllNotDB,
+    getStateFilesPublished
 }
