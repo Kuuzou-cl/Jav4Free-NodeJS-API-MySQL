@@ -197,14 +197,14 @@ async function getAllNotDB() {
     }
 }
 
-async function getStateFilesPublished(page = 1) {
+async function getStateFilesScenes(page = 1) {
     const offset = helper.getOffset(page, config.listPerPageScenes);
     const perPage = config.listPerPageScenes;
     const query = "SELECT s.id, s.code, s.hide, IFNULL((SELECT ss.description FROM S3_Scenes ss WHERE ss.description = s.code), 'false') as video720, IFNULL((SELECT ss.description FROM S3_Scenes480 ss WHERE ss.description = s.code), 'false') as video480, IFNULL((SELECT ss.description FROM S3_ScenesPreview ss WHERE ss.description = s.code), 'false') as videoPreview, IFNULL((SELECT ss.description FROM S3_ScenesSprite ss WHERE ss.description = s.code), 'false') as videoSprite, IFNULL((SELECT ss.description FROM S3_ScenesStatic ss WHERE ss.description = s.code), 'false') as videoStatic, IFNULL((SELECT ss.description FROM S3_ScenesVTT ss WHERE ss.description = s.code), 'false') as videoVTT FROM Scene s order by s.id desc LIMIT ?,?"
     const rows = await db.query(query,[offset + "", perPage + ""]);
 
     const maxRows = await db.query(
-        `SELECT * FROM Scene WHERE hide = 0 `
+        `SELECT * FROM Scene`
     );
 
     const pagesData = helper.getCountPages(page,config.listPerPageScenes,maxRows.length);
@@ -215,8 +215,25 @@ async function getStateFilesPublished(page = 1) {
     }
 }
 
+async function getStateFilesJavs(page = 1) {
+    const offset = helper.getOffset(page, config.listPerPageScenes);
+    const perPage = config.listPerPageScenes;
+    const query = "SELECT j.id, j.code, j.hide, IFNULL( (SELECT sj.description FROM S3_Javs sj WHERE sj.description = j.code), 'false') as imageCover from Jav j order by j.id desc LIMIT ?,?"
+    const rows = await db.query(query,[offset + "", perPage + ""]);
+
+    const maxRows = await db.query(
+        `SELECT * FROM Jav`
+    );
+
+    const pagesData = helper.getCountPages(page,config.listPerPageScenes,maxRows.length);
+    const meta = { page : page, nextPage: pagesData.nextPage, lastPage: pagesData.lastPage };
+    return {
+        Javs : helper.emptyOrRows(rows),
+        meta
+    }
+}
+
 module.exports = {
-    getAll,
-    getAllNotDB,
-    getStateFilesPublished
+    getStateFilesScenes,
+    getStateFilesJavs
 }
