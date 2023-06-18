@@ -23,4 +23,24 @@ router.get('/stateFiles/javs/', async function(req, res, next) {
   }
 });
 
+/* GET All files for Idols*/
+router.get('/stateFiles/idols/', async function(req, res, next) {
+  try {
+    res.json(await aws.getStateFilesIdols(req.query.page));
+  } catch (err) {
+    console.error(`Error while checking DB`, err.message);
+    next(err);
+  }
+});
+
+/* GET All files pending*/
+router.get('/stateFiles/pending/', async function(req, res, next) {
+  try {
+    res.json(await aws.getPendingFiles());
+  } catch (err) {
+    console.error(`Error while checking DB`, err.message);
+    next(err);
+  }
+});
+
 module.exports = router;
