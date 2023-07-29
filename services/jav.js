@@ -352,16 +352,6 @@ async function updateJav(id = 0, title = 'error', code = 'error', image = 'error
 
 
 async function updateJavV2(id = 0, title = 'error', code = 'error', image = 'error', hide = 1, categories = [], idols = [], scenes = []) {
-    const temp = {
-        id : id,
-        title : title,
-        code : code,
-        image : image,
-        hide : hide,
-        categories : categories,
-        idols : idols,
-        scenes : scenes
-    }
     
     const rows = await db.query(
         `SELECT * FROM Jav where id = ${id}`
@@ -412,7 +402,7 @@ async function updateJavV2(id = 0, title = 'error', code = 'error', image = 'err
         });
 
         return {
-            Jav: helper.emptyOrRows(newRows), meta: result, test: temp
+            Jav: helper.emptyOrRows(newRows), meta: result
         }
     } else {
         return {
