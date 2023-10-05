@@ -2,6 +2,57 @@ const db = require('./db');
 const helper = require('../helper');
 const config = require('../config');
 
+async function getCategories() {
+    const rows = await db.query(
+        `SELECT * FROM category order by name`
+    );
+
+    return {
+        Categories : helper.emptyOrRows(rows)
+    }
+}
+
+async function getJavsByCategories(page = 1, name = '', order = 'desc') {
+    const offset = helper.getOffset(page, config.listPerPageScenes);
+    if (order != 'desc' && order != 'asc') {
+        order = 'desc'
+    }
+    const rows = await db.query(
+        `SELECT * from jav s join jav_category sc on s.id = sc.jav_id where sc.category_id = (SELECT c.id from category c WHERE c.name = '${name}') order by s.id ${order} LIMIT ${offset},${config.listPerPageScenes}`
+    );
+
+    const tempId = []
+    rows.forEach(element => {
+        tempId.push(element.id);
+    });
+
+    let rowsCategories = [];
+
+    for (let index = 0; index < tempId.length; index++) {
+        rowsCategories.push(helper.emptyOrRows(await db.query(
+            `SELECT c.id, c.name FROM category c join jav_category jc on c.id = jc.category_id and jc.jav_id = ${tempId[index]} ORDER BY RAND() LIMIT 0,3`
+        )));
+    }
+
+    for (let index = 0; index < rows.length; index++) {
+        rows[index].categories = rowsCategories[index];
+    }
+
+    const maxRows = await db.query(
+        `SELECT * from jav s join jav_category sc on s.id = sc.jav_id where sc.category_id = (SELECT c.id from category c WHERE c.name = '${name}') order by s.id ${order}`
+    );
+    const pagesData = helper.getCountPages(page,config.listPerPageScenes,maxRows.length);
+    const meta = { page : page, nextPage: pagesData.nextPage, lastPage: pagesData.lastPage };
+
+    return {
+        Javs : helper.emptyOrRows(rows),
+        meta
+    }
+}
+
+
+
+
 async function getAll() {
     const rows = await db.query(
         `SELECT * FROM Category order by name`
@@ -190,6 +241,9 @@ async function updateCategoryV2(id= 0, name = 'error') {
 }
 
 module.exports = {
+    getCategories,
+    getJavsByCategories,
+    //
     getAll,
     getCategory,
     getScenes,

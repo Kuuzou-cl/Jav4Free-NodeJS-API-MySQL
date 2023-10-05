@@ -3,6 +3,60 @@ const router = express.Router();
 const javs = require('../services/jav');
 const helper = require('../helper');
 
+/* GET Javs by id*/
+router.get('/getjavbyid', async function(req, res, next) {
+  try {
+    res.json(await javs.getJavById(req.query.id));
+  } catch (err) {
+    console.error(`Error while getting newest Javs `, err.message);
+    next(err);
+  }
+});
+
+/* GET Javs by code*/
+router.get('/getjavbycode', async function(req, res, next) {
+  try {
+    res.json(await javs.getJavByCode(req.query.code));
+  } catch (err) {
+    console.error(`Error while getting newest Javs `, err.message);
+    next(err);
+  }
+});
+
+/* GET Javs by order and page*/
+router.get('/getjavs', async function(req, res, next) {
+  try {
+    res.json(await javs.getJavs(req.query.page,req.query.hide,req.query.variable,req.query.order));
+  } catch (err) {
+    console.error(`Error while getting newest Javs `, err.message);
+    next(err);
+  }
+});
+
+/* GET latest Javs by limit*/
+router.get('/getlatestjavs', async function(req, res, next) {
+  try {
+    res.json(await javs.getJavsByLatest(req.query.limit));
+  } catch (err) {
+    console.error(`Error while getting newest Javs `, err.message);
+    next(err);
+  }
+});
+
+/* New jav view by id*/
+router.get('/getJavViewById', async function (req, res, next) {
+  try {
+    res.json(await javs.getJavViewById(req.query.id));
+  } catch (err) {
+    console.error(`Error while creating view of Jav `, err.message);
+    next(err);
+  }
+});
+
+
+
+
+
 /* GET Javs by page and offset */
 router.get('/', async function(req, res, next) {
   try {
@@ -23,15 +77,7 @@ router.get('/jav', async function(req, res, next) {
   }
 });
 
-/* GET Javs by id*/
-router.get('/javId', async function(req, res, next) {
-  try {
-    res.json(await javs.getJavId(req.query.id));
-  } catch (err) {
-    console.error(`Error while getting newest Javs `, err.message);
-    next(err);
-  }
-});
+
 
 /* GET Newest Javs by limit*/
 router.get('/newest', async function(req, res, next) {

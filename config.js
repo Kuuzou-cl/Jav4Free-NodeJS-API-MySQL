@@ -5,7 +5,7 @@ const config = {
         port     : '3306',
         user     : 'admin',
         password : 'Waflek977kuu!',
-        database : 'jav4free'
+        database : 'shurima'
     },
     cors: {
       server : [

@@ -4,6 +4,31 @@ const categories = require('../services/category');
 const helper = require('../helper');
 
 /* GET All Categories */
+router.get('/getCategories', async function(req, res, next) {
+  try {
+    res.json(await categories.getCategories());
+  } catch (err) {
+    console.error(`Error while getting Categories `, err.message);
+    next(err);
+  }
+});
+
+/* GET All Categories */
+router.get('/getJavsByCategories', async function(req, res, next) {
+  try {
+    res.json(await categories.getJavsByCategories(req.query.page,req.query.name,req.query.order));
+  } catch (err) {
+    console.error(`Error while getting Javs `, err.message);
+    next(err);
+  }
+});
+
+
+
+
+
+
+/* GET All Categories */
 router.get('/', async function(req, res, next) {
   try {
     res.json(await categories.getAll());
