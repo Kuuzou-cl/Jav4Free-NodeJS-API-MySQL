@@ -1,11 +1,10 @@
 const db = require('./db');
 const helper = require('../helper');
-const config = require('../config');
 const jwt = require('jsonwebtoken');
 
 async function login(email, password) {
     const rows = await db.query(
-        `SELECT * FROM JavUser WHERE email = '${email}' and pswd = AES_ENCRYPT('${password}', 'syny')`
+        `SELECT * FROM user WHERE email = '${email}' and pswd = AES_ENCRYPT('${password}', 'syny')`
     );
     const data = helper.emptyOrRows(rows);
     if (data[0]) {
@@ -37,6 +36,8 @@ async function tokenAlive(email, token) {
         return { alive: false, error: error };
     }
 }
+
+
 
 module.exports = {
     login,
