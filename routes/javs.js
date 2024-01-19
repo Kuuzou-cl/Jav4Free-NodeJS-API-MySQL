@@ -3,16 +3,18 @@ const router = express.Router();
 const javs = require('../services/jav');
 const helper = require('../helper');
 
-/* GET Javs by id*/
-router.get('/getjavbyid', async function(req, res, next) {
+/* GET Javs Latest jav Homepage*/
+router.get('/getlatest', async function(req, res, next) {
   try {
-    res.json(await javs.getJavById(req.query.id));
+    res.json(await javs.getJavByLatest(req.query.limit));
   } catch (err) {
     console.error(`Error while getting newest Javs `, err.message);
     next(err);
   }
 });
 
+
+//----------------------------
 /* GET Javs by code*/
 router.get('/getjavbycode', async function(req, res, next) {
   try {

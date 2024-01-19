@@ -1,9 +1,32 @@
 const db = require('./db');
 const helper = require('../helper');
 const config = require('../config');
-const dotenv = require('dotenv').config();
-const cloudfrontSigner = require('@aws-sdk/cloudfront-signer');
 
+//v3
+async function getJavByLatest(limit = 2) {
+    let rows = await db.query(
+        `select * from jav.jav j where j.hide = 0 and poster is not null and title is not null order by release_date desc limit 0,${limit}`
+    );
+    
+    rows = helper.emptyOrRows(rows);
+    
+    for (let index = 0; index < rows.length; index++) {
+        let rows_categories = await db.query(
+            `select id, name from jav.category c join jav.jav_category jc on c.id = jc.category_id where jc.jav_id = ${rows[index].id} ORDER BY RAND() limit 0,2`
+        );
+        rows[index].categories = helper.emptyOrRows(rows_categories);
+        let rows_idols = await db.query(
+            `select id, name from jav.idol i join jav.jav_idol ji on i.id = ji.idol_id where ji.jav_id = ${rows[index].id} ORDER BY RAND() limit 1`
+        );
+        rows[index].idols = helper.emptyOrRows(rows_idols);
+    }
+
+    return {
+        Response: helper.emptyOrRows(rows)
+    }
+}
+
+//old
 async function getJavById(id = 1) {
 
     const rowsJav = await db.query(
@@ -18,40 +41,6 @@ async function getJavById(id = 1) {
     const rowsProducer = await db.query(
         `SELECT p.id, p.name from producer p join jav_producer pi on pi.producer_id = p.id WHERE pi.jav_id = '${id}'`
     );
-
-    if (helper.emptyOrRows(rowsJav[0]).length > 0) {
-        rowsJav[0].poster = cloudfrontSigner.getSignedUrl({
-            url: rowsJav[0].poster,
-            dateLessThan: new Date(Date.now() + 1000 * 60 * 60),
-            privateKey: process.env.cloudfront_privateKey,
-            keyPairId: process.env.cloudfront_keyPairId
-        });
-
-        rowsJav[0].video = cloudfrontSigner.getSignedUrl({
-            url: rowsJav[0].video,
-            dateLessThan: new Date(Date.now() + 1000 * 60 * 60),
-            privateKey: process.env.cloudfront_privateKey,
-            keyPairId: process.env.cloudfront_keyPairId
-        });
-
-        rowsJav[0].vtt = cloudfrontSigner.getSignedUrl({
-            url: rowsJav[0].vtt,
-            dateLessThan: new Date(Date.now() + 1000 * 60 * 60),
-            privateKey: process.env.cloudfront_privateKey,
-            keyPairId: process.env.cloudfront_keyPairId
-        });
-    }
-
-    if (helper.emptyOrRows(rowsIdols).length > 0) {
-        helper.emptyOrRows(rowsIdols).forEach(element => {
-            element.poster = cloudfrontSigner.getSignedUrl({
-                url: element.poster,
-                dateLessThan: new Date(Date.now() + 1000 * 60 * 60),
-                privateKey: process.env.cloudfront_privateKey,
-                keyPairId: process.env.cloudfront_keyPairId
-            });
-        });
-    }
 
     return {
         Jav: helper.emptyOrRows(rowsJav[0]),
@@ -76,39 +65,6 @@ async function getJavByCode(code = 0) {
         `SELECT p.id, p.name from producer p join jav_producer pi on pi.producer_id = p.id WHERE pi.jav_id = (SELECT id FROM jav j where j.code = '${code}')`
     );
 
-    if (helper.emptyOrRows(rowsJav[0]).length > 0) {
-        rowsJav[0].poster = cloudfrontSigner.getSignedUrl({
-            url: rowsJav[0].poster,
-            dateLessThan: new Date(Date.now() + 1000 * 60 * 60),
-            privateKey: process.env.cloudfront_privateKey,
-            keyPairId: process.env.cloudfront_keyPairId
-        });
-
-        rowsJav[0].video = cloudfrontSigner.getSignedUrl({
-            url: rowsJav[0].video,
-            dateLessThan: new Date(Date.now() + 1000 * 60 * 60),
-            privateKey: process.env.cloudfront_privateKey,
-            keyPairId: process.env.cloudfront_keyPairId
-        });
-
-        rowsJav[0].vtt = cloudfrontSigner.getSignedUrl({
-            url: rowsJav[0].vtt,
-            dateLessThan: new Date(Date.now() + 1000 * 60 * 60),
-            privateKey: process.env.cloudfront_privateKey,
-            keyPairId: process.env.cloudfront_keyPairId
-        });
-    }
-
-    if (helper.emptyOrRows(rowsIdols).length > 0) {
-        helper.emptyOrRows(rowsIdols).forEach(element => {
-            element.poster = cloudfrontSigner.getSignedUrl({
-                url: element.poster,
-                dateLessThan: new Date(Date.now() + 1000 * 60 * 60),
-                privateKey: process.env.cloudfront_privateKey,
-                keyPairId: process.env.cloudfront_keyPairId
-            });
-        });
-    }
 
     return {
         Jav: helper.emptyOrRows(rowsJav[0]),
@@ -148,32 +104,7 @@ async function getJavs(page = 1, hide = 0, variable = 'id', order = 'desc') {
         `SELECT * FROM jav WHERE hide = ${hide}`
     );
 
-    if (helper.emptyOrRows(rows).length > 0) {
 
-        helper.emptyOrRows(rows).forEach(element => {
-            element.poster = cloudfrontSigner.getSignedUrl({
-                url: element.poster,
-                dateLessThan: new Date(Date.now() + 1000 * 60 * 60),
-                privateKey: process.env.cloudfront_privateKey,
-                keyPairId: process.env.cloudfront_keyPairId
-            });
-
-            element.video = cloudfrontSigner.getSignedUrl({
-                url: element.video,
-                dateLessThan: new Date(Date.now() + 1000 * 60 * 60),
-                privateKey: process.env.cloudfront_privateKey,
-                keyPairId: process.env.cloudfront_keyPairId
-            });
-
-            element.vtt = cloudfrontSigner.getSignedUrl({
-                url: element.vtt,
-                dateLessThan: new Date(Date.now() + 1000 * 60 * 60),
-                privateKey: process.env.cloudfront_privateKey,
-                keyPairId: process.env.cloudfront_keyPairId
-            });
-        });
-
-    }
 
     const pagesData = helper.getCountPages(page, config.listPerPageJavs, maxRows.length);
     const meta = { page: page, nextPage: pagesData.nextPage, lastPage: pagesData.lastPage };
@@ -206,32 +137,6 @@ async function getJavsByLatest(limit = 1) {
         rows[index].categories = rowsCategories[index];
     }
 
-    if (helper.emptyOrRows(rows).length > 0) {
-
-        helper.emptyOrRows(rows).forEach(element => {
-            element.poster = cloudfrontSigner.getSignedUrl({
-                url: element.poster,
-                dateLessThan: new Date(Date.now() + 1000 * 60 * 60),
-                privateKey: process.env.cloudfront_privateKey,
-                keyPairId: process.env.cloudfront_keyPairId
-            });
-
-            element.video = cloudfrontSigner.getSignedUrl({
-                url: element.video,
-                dateLessThan: new Date(Date.now() + 1000 * 60 * 60),
-                privateKey: process.env.cloudfront_privateKey,
-                keyPairId: process.env.cloudfront_keyPairId
-            });
-
-            element.vtt = cloudfrontSigner.getSignedUrl({
-                url: element.vtt,
-                dateLessThan: new Date(Date.now() + 1000 * 60 * 60),
-                privateKey: process.env.cloudfront_privateKey,
-                keyPairId: process.env.cloudfront_keyPairId
-            });
-        });
-
-    }
 
     return {
         Javs: helper.emptyOrRows(rows)
@@ -375,6 +280,8 @@ async function updateJavV2(id = 0, title = 'error', code = 'error', image = 'err
 }
 
 module.exports = {
+    getJavByLatest,
+    //
     getJavById,
     getJavByCode,
     getJavs,

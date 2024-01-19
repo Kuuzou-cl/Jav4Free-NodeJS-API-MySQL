@@ -1,11 +1,11 @@
 const config = {
     db: {
       /* don't expose password or any sensitive info, done only for demo */
-        host     : 'j4f-db.c4oajpzrzl5x.us-east-1.rds.amazonaws.com',
+        host     : 'localhost',
         port     : '3306',
-        user     : 'admin',
+        user     : 'root',
         password : 'Waflek977kuu!',
-        database : 'shurima'
+        database : 'jav'
     },
     cors: {
       server : [

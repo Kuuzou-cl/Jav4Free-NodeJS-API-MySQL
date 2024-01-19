@@ -3,6 +3,18 @@ const router = express.Router();
 const categories = require('../services/category');
 const helper = require('../helper');
 
+/* Get Hot Categories HomePage*/
+router.get('/getHotCategories', async function(req, res, next) {
+  try {
+    res.json(await categories.getHotCategories(req.query.limit));
+  } catch (err) {
+    console.error(`Error while getting Categories `, err.message);
+    next(err);
+  }
+});
+
+
+//----------------------------
 /* GET All Categories */
 router.get('/getCategories', async function(req, res, next) {
   try {

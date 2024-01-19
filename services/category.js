@@ -2,6 +2,17 @@ const db = require('./db');
 const helper = require('../helper');
 const config = require('../config');
 
+async function getHotCategories(limit = 6) {
+    const rows = await db.query(
+        `select c.id, c.name, count(jc.category_id) as countJav from jav.jav_category jc join jav.category c on jc.category_id = c.id 
+        group by jc.category_id order by countJav desc limit 0,${limit}`
+    );
+
+    return {
+        Response: helper.emptyOrRows(rows)
+    }
+}
+
 async function getCategories() {
     const rows = await db.query(
         `SELECT * FROM category order by name`
@@ -119,6 +130,7 @@ async function updateCategory(id = 0, name = '') {
 }
 
 module.exports = {
+    getHotCategories,
     getCategories,
     getJavsByCategories,
     newCategory,

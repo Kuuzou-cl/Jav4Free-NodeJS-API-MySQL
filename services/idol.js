@@ -1,8 +1,6 @@
 const db = require('./db');
 const helper = require('../helper');
 const config = require('../config');
-const dotenv = require('dotenv').config();
-const cloudfrontSigner = require('@aws-sdk/cloudfront-signer');
 
 async function getRandomByLimit(limit = 1) {
     const rows = await db.query(

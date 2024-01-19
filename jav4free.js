@@ -1,11 +1,9 @@
 const express = require("express");
 const app = express();
 const port = 3000;
+const videosRouter = require("./routes/videos");
 const javsRouter = require("./routes/javs");
-const idolsRouter = require("./routes/idols");
 const categoriesRouter = require("./routes/categories");
-const searchsRouter = require("./routes/searchs");
-const usersRouter = require("./routes/users");
 const cors = require('cors');
 
 const config = require('./config');
@@ -27,13 +25,9 @@ app.get("/", (req, res) => {
 
 app.use("/javs", javsRouter);
 
-app.use("/idols", idolsRouter);
-
 app.use("/categories", categoriesRouter);
 
-app.use("/search", searchsRouter);
-
-app.use("/users", usersRouter);
+app.use("/videos", videosRouter);
 
 /* Error handler middleware */
 app.use((err, req, res, next) => {
@@ -44,5 +38,5 @@ app.use((err, req, res, next) => {
 });
 
 app.listen(port, () => {
-  console.log(`Example app listening at http://localhost:${port}`);
+  console.log(`app listening at http://localhost:${port}`);
 });
