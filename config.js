@@ -1,19 +1,24 @@
+var fs = require("fs");
+
 const config = {
-    db: {
-      /* don't expose password or any sensitive info, done only for demo */
-        host     : 'localhost',
-        port     : '3306',
-        user     : 'root',
-        password : 'Waflek977kuu!',
-        database : 'jav'
-    },
-    cors: {
-      server : [
-        {origin : "*", credentials : true}
-      ]
-    },
-    listPerPageJavs: 12,
-    listPerPageScenes: 20,
-    listPerPageIdols: 18
-  };
-  module.exports = config;
+  db: {
+    /* don't expose password or any sensitive info, done only for demo */
+    host: 'jav-db-01-do-user-6590009-0.c.db.ondigitalocean.com',
+    port: '25060',
+    user: 'doadmin',
+    password: 'AVNS_hD_ZI-eDih5rJnjp4t1',
+    database: 'jav',
+    ssl: {
+      ca: fs.readFileSync(__dirname + '/ca-certificate.crt')
+    }
+  },
+  cors: {
+    server: [
+      { origin: "*", credentials: true }
+    ]
+  },
+  listPerPageJavs: 12,
+  listPerPageScenes: 20,
+  listPerPageIdols: 18
+};
+module.exports = config;
