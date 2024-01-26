@@ -13,4 +13,14 @@ router.get('/getlatest', async function(req, res, next) {
     }
   });
 
+/* GET Video by code*/
+router.get('/getvideo', async function(req, res, next) {
+  try {
+    res.json(await videos.getVideoByCode(req.query.code));
+  } catch (err) {
+    console.error(`Error while getting video `, err.message);
+    next(err);
+  }
+});
+
 module.exports = router;
