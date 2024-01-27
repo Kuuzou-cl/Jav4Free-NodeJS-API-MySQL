@@ -23,4 +23,14 @@ router.get('/getvideo', async function(req, res, next) {
   }
 });
 
+/* GET all Videos by page*/
+router.get('/getallvideos', async function(req, res, next) {
+  try {
+    res.json(await videos.getAllVideosByPage(req.query.page));
+  } catch (err) {
+    console.error(`Error while getting videos `, err.message);
+    next(err);
+  }
+});
+
 module.exports = router;

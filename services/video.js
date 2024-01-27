@@ -36,7 +36,36 @@ async function getVideoByCode(code = 1) {
     }
 }
 
+async function getAllVideosByPage(page = 1) {
+    const offset = helper.getOffset(page, config.listPerPageJavs);
+    const rows = await db.query(
+        `SELECT * FROM video WHERE hide = 0 order by release_date desc LIMIT ${offset},${config.listPerPageJavs}`
+    );
+
+    const tempId = []
+    rows.forEach(element => {
+        tempId.push(element.id);
+    });
+
+    const maxRows = await db.query(
+        `SELECT * FROM video WHERE hide = 0`
+    );
+
+    const pagesData = helper.getCountPages(page, config.listPerPageJavs, maxRows.length);
+    const meta = { page: page, nextPage: pagesData.nextPage, lastPage: pagesData.lastPage };
+
+    return {
+        Response:{
+            Videos: helper.emptyOrRows(rows),
+            page: page,
+            nextPage: pagesData.nextPage, 
+            lastPage: pagesData.lastPage
+        }
+    }
+}
+
 module.exports = {
     getVideoByLatest,
-    getVideoByCode
+    getVideoByCode,
+    getAllVideosByPage
 }
