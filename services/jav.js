@@ -7,9 +7,9 @@ async function getJavByLatest(limit = 2) {
     let rows = await db.query(
         `select * from jav.jav j where j.hide = 0 and poster is not null and title is not null order by release_date desc limit 0,${limit}`
     );
-    
+
     rows = helper.emptyOrRows(rows);
-    
+
     for (let index = 0; index < rows.length; index++) {
         let rows_categories = await db.query(
             `select id, name from jav.category c join jav.jav_category jc on c.id = jc.category_id where jc.jav_id = ${rows[index].id} ORDER BY RAND() limit 0,2`
@@ -23,6 +23,27 @@ async function getJavByLatest(limit = 2) {
 
     return {
         Response: helper.emptyOrRows(rows)
+    }
+}
+
+async function getJavByCode(code = 0) {
+
+    const rowsJav = await db.query(
+        `SELECT * FROM jav j where j.code = '${code}'`
+    );
+    const rowsCategories = await db.query(
+        `SELECT * from category c join jav_category jc on c.id = jc.category_id where jc.jav_id = (SELECT id FROM jav j where j.code = '${code}')`
+    );
+    const rowsIdols = await db.query(
+        `SELECT * from idol i join jav_idol ji on ji.idol_id = i.id WHERE ji.jav_id = (SELECT id FROM jav j where j.code = '${code}')`
+    );
+
+    return {
+        Response: {
+            Jav: helper.emptyOrRows(rowsJav[0]),
+            Categories: helper.emptyOrRows(rowsCategories),
+            Idols: helper.emptyOrRows(rowsIdols)
+        }
     }
 }
 
@@ -50,29 +71,6 @@ async function getJavById(id = 1) {
     }
 }
 
-async function getJavByCode(code = 0) {
-
-    const rowsJav = await db.query(
-        `SELECT * FROM jav j where j.code = '${code}'`
-    );
-    const rowsCategories = await db.query(
-        `SELECT * from category c join jav_category jc on c.id = jc.category_id where jc.jav_id = (SELECT id FROM jav j where j.code = '${code}')`
-    );
-    const rowsIdols = await db.query(
-        `SELECT * from idol i join jav_idol ji on ji.idol_id = i.id WHERE ji.jav_id = (SELECT id FROM jav j where j.code = '${code}')`
-    );
-    const rowsProducer = await db.query(
-        `SELECT p.id, p.name from producer p join jav_producer pi on pi.producer_id = p.id WHERE pi.jav_id = (SELECT id FROM jav j where j.code = '${code}')`
-    );
-
-
-    return {
-        Jav: helper.emptyOrRows(rowsJav[0]),
-        Categories: helper.emptyOrRows(rowsCategories),
-        Idols: helper.emptyOrRows(rowsIdols),
-        Producer: helper.emptyOrRows(rowsProducer[0])
-    }
-}
 
 async function getJavs(page = 1, hide = 0, variable = 'id', order = 'desc') {
     const offset = helper.getOffset(page, config.listPerPageJavs);
@@ -281,9 +279,9 @@ async function updateJavV2(id = 0, title = 'error', code = 'error', image = 'err
 
 module.exports = {
     getJavByLatest,
-    //
-    getJavById,
     getJavByCode,
+    //
+    getJavById,    
     getJavs,
     getJavsByLatest,
     getJavViewById,

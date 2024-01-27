@@ -13,8 +13,6 @@ router.get('/getlatest', async function(req, res, next) {
   }
 });
 
-
-//----------------------------
 /* GET Javs by code*/
 router.get('/getjavbycode', async function(req, res, next) {
   try {
@@ -24,6 +22,9 @@ router.get('/getjavbycode', async function(req, res, next) {
     next(err);
   }
 });
+
+
+//----------------------------
 
 /* GET Javs by order and page*/
 router.get('/getjavs', async function(req, res, next) {
