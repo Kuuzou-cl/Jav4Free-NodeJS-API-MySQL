@@ -31,19 +31,20 @@ async function getJavByCode(code = 0) {
     const rowsJav = await db.query(
         `SELECT * FROM jav j where j.code = '${code}'`
     );
-    const rowsCategories = await db.query(
-        `SELECT * from category c join jav_category jc on c.id = jc.category_id where jc.jav_id = (SELECT id FROM jav j where j.code = '${code}')`
-    );
-    const rowsIdols = await db.query(
-        `SELECT * from idol i join jav_idol ji on ji.idol_id = i.id WHERE ji.jav_id = (SELECT id FROM jav j where j.code = '${code}')`
-    );
+
+    if (rowsJav[0]) {
+        const rowsCategories = await db.query(
+            `SELECT * from category c join jav_category jc on c.id = jc.category_id where jc.jav_id = (SELECT id FROM jav j where j.code = '${code}')`
+        );
+        rowsJav[0].categories = helper.emptyOrRows(rowsCategories);
+        const rowsIdols = await db.query(
+            `SELECT * from idol i join jav_idol ji on ji.idol_id = i.id WHERE ji.jav_id = (SELECT id FROM jav j where j.code = '${code}')`
+        );
+        rowsJav[0].idols = helper.emptyOrRows(rowsIdols);
+    }
 
     return {
-        Response: {
-            Jav: helper.emptyOrRows(rowsJav[0]),
-            Categories: helper.emptyOrRows(rowsCategories),
-            Idols: helper.emptyOrRows(rowsIdols)
-        }
+        Response: helper.emptyOrRows(rowsJav[0])
     }
 }
 
