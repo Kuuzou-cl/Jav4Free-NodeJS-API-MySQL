@@ -41,6 +41,10 @@ async function getJavByCode(code = 0) {
             `SELECT * from idol i join jav_idol ji on ji.idol_id = i.id WHERE ji.jav_id = (SELECT id FROM jav j where j.code = '${code}')`
         );
         rowsJav[0].idols = helper.emptyOrRows(rowsIdols);
+        const rwosVideos = await db.query(
+            `SELECT * from video v join jav_video jv on v.id = jv.video_id where jv.jav_id = (SELECT id FROM jav j where j.code = '${code}')`
+        );
+        rowsJav[0].videos = helper.emptyOrRows(rwosVideos);
     }
 
     return {
