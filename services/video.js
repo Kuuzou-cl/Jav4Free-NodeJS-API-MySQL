@@ -5,7 +5,7 @@ const config = require('../config');
 //v3
 async function getVideoByLatest(limit = 16) {
     let rows = await db.query(
-        `select * from jav.video v where v.hide = 0 and poster is not null and title is not null and video is not null and video_preview is not null order by release_date desc limit 0,${limit}`
+        `select * from jav.video v where v.hide = 0 order by release_date desc limit 0,${limit}`
     );
 
     rows = helper.emptyOrRows(rows);
@@ -18,7 +18,7 @@ async function getVideoByLatest(limit = 16) {
 async function getVideoByCode(code = 1) {
 
     const rowsVideo = await db.query(
-        `SELECT id, code, title, length, poster, playback_id, video, video_preview, vtt FROM video v where v.code = '${code}'`
+        `SELECT id, code, title, length, poster, playback_id, video_preview FROM video v where v.code = '${code}'`
     );
     const rowsCategories = await db.query(
         `SELECT c.id, c.name from category c join video_category vc on c.id = vc.category_id join video v on vc.video_id = v.id where v.code = '${code}'`
