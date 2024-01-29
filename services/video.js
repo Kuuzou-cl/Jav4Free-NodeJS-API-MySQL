@@ -18,7 +18,7 @@ async function getVideoByLatest(limit = 16) {
 async function getVideoByCode(code = 1) {
 
     const rowsVideo = await db.query(
-        `SELECT id, code, title, length, poster, video, video_preview, vtt FROM video v where v.code = '${code}'`
+        `SELECT id, code, title, length, poster, playback_id, video, video_preview, vtt FROM video v where v.code = '${code}'`
     );
     const rowsCategories = await db.query(
         `SELECT c.id, c.name from category c join video_category vc on c.id = vc.category_id join video v on vc.video_id = v.id where v.code = '${code}'`
