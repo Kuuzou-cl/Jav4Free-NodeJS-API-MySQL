@@ -1,7 +1,6 @@
 const express = require("express");
 const app = express();
 const port = 8080;
-const videosRouter = require("./routes/videos");
 const javsRouter = require("./routes/javs");
 const categoriesRouter = require("./routes/categories");
 const cors = require('cors');
@@ -26,8 +25,6 @@ app.get("/", (req, res) => {
 app.use("/javs", javsRouter);
 
 app.use("/categories", categoriesRouter);
-
-app.use("/videos", videosRouter);
 
 /* Error handler middleware */
 app.use((err, req, res, next) => {
