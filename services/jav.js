@@ -75,7 +75,7 @@ async function getJavByPage(page = 1) {
     const offset = helper.getOffset(page, config.listPerPageJavs);
 
     const rows = await db.query(
-        `SELECT * FROM jav.jav WHERE hide = o order by release_date desc LIMIT ${offset},${config.listPerPageJavs}`
+        `SELECT * FROM jav.jav WHERE hide = 0 order by release_date desc LIMIT ${offset},${config.listPerPageJavs}`
     );
 
     const maxRows = await db.query(
