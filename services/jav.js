@@ -2,7 +2,7 @@ const db = require('./db');
 const helper = require('../helper');
 const config = require('../config');
 
-//v3
+//v3 
 async function getJavByLatest(limit = 2) {
     let rows = await db.query(
         `select * from jav.jav j where j.hide = 0 and poster is not null and title is not null order by release_date desc limit 0,${limit}`
@@ -48,7 +48,28 @@ async function getJavByCode(code = 0) {
     }
 }
 
+async function getJavByRand(limit = 2) {
+    let rows = await db.query(
+        `select * from jav.jav j where j.hide = 0 and poster is not null and title is not null order BY RAND() limit 0,${limit}`
+    );
 
+    rows = helper.emptyOrRows(rows);
+
+    for (let index = 0; index < rows.length; index++) {
+        let rows_categories = await db.query(
+            `select id, name from jav.category c join jav.jav_category jc on c.id = jc.category_id where jc.jav_id = ${rows[index].id} ORDER BY RAND() limit 0,2`
+        );
+        rows[index].categories = helper.emptyOrRows(rows_categories);
+        let rows_idols = await db.query(
+            `select id, name from jav.idol i join jav.jav_idol ji on i.id = ji.idol_id where ji.jav_id = ${rows[index].id} ORDER BY RAND() limit 1`
+        );
+        rows[index].idols = helper.emptyOrRows(rows_idols);
+    }
+
+    return {
+        Response: helper.emptyOrRows(rows)
+    }
+}
 
 //old
 async function getJavById(id = 1) {
@@ -283,6 +304,7 @@ async function updateJavV2(id = 0, title = 'error', code = 'error', image = 'err
 module.exports = {
     getJavByLatest,
     getJavByCode,
+    getJavByRand,
     //
     getJavById,    
     getJavs,

@@ -23,6 +23,16 @@ router.get('/getjavbycode', async function(req, res, next) {
   }
 });
 
+/* GET Javs Rnadom jav page*/
+router.get('/getrandom', async function(req, res, next) {
+  try {
+    res.json(await javs.getJavByLatest(req.query.limit));
+  } catch (err) {
+    console.error(`Error while getting newest Javs `, err.message);
+    next(err);
+  }
+});
+
 
 //----------------------------
 
