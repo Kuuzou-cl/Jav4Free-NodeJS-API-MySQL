@@ -71,6 +71,30 @@ async function getJavByRand(limit = 2) {
     }
 }
 
+async function getJavByPage(page = 1) {
+    const offset = helper.getOffset(page, config.listPerPageJavs);
+
+    const rows = await db.query(
+        `SELECT * FROM jav.jav WHERE hide = o order by release_date desc LIMIT ${offset},${config.listPerPageJavs}`
+    );
+
+    const maxRows = await db.query(
+        `SELECT * FROM jav WHERE hide = ${hide}`
+    );
+
+    const pagesData = helper.getCountPages(page, config.listPerPageJavs, maxRows.length);
+
+    return {
+        Response:{
+            Javs: helper.emptyOrRows(rows),
+            page: page,
+            nextPage: pagesData.nextPage, 
+            lastPage: pagesData.lastPage
+        }
+    }
+}
+
+
 //old
 async function getJavById(id = 1) {
 
@@ -96,46 +120,7 @@ async function getJavById(id = 1) {
 }
 
 
-async function getJavs(page = 1, hide = 0, variable = 'id', order = 'desc') {
-    const offset = helper.getOffset(page, config.listPerPageJavs);
-    if (order != 'desc' && order != 'asc') {
-        order = 'desc'
-    }
-    const rows = await db.query(
-        `SELECT * FROM jav WHERE hide = ${hide} order by ${variable}  ${order} LIMIT ${offset},${config.listPerPageJavs}`
-    );
 
-    const tempId = []
-    rows.forEach(element => {
-        tempId.push(element.id);
-    });
-
-    let rowsCategories = [];
-
-    for (let index = 0; index < tempId.length; index++) {
-        rowsCategories.push(helper.emptyOrRows(await db.query(
-            `SELECT c.id, c.name FROM category c join jav_category jc on c.id = jc.category_id and jc.jav_id = ${tempId[index]} ORDER BY RAND() LIMIT 0,3`
-        )));
-    }
-
-    for (let index = 0; index < rows.length; index++) {
-        rows[index].categories = rowsCategories[index];
-    }
-
-    const maxRows = await db.query(
-        `SELECT * FROM jav WHERE hide = ${hide}`
-    );
-
-
-
-    const pagesData = helper.getCountPages(page, config.listPerPageJavs, maxRows.length);
-    const meta = { page: page, nextPage: pagesData.nextPage, lastPage: pagesData.lastPage };
-
-    return {
-        Javs: helper.emptyOrRows(rows),
-        meta
-    }
-}
 
 async function getJavsByLatest(limit = 1) {
     const rows = await db.query(
@@ -305,9 +290,9 @@ module.exports = {
     getJavByLatest,
     getJavByCode,
     getJavByRand,
+    getJavByPage,
     //
     getJavById,    
-    getJavs,
     getJavsByLatest,
     getJavViewById,
     //

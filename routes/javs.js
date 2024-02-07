@@ -23,7 +23,7 @@ router.get('/getjavbycode', async function(req, res, next) {
   }
 });
 
-/* GET Javs Rnadom jav page*/
+/* GET Javs Random jav page*/
 router.get('/getrandom', async function(req, res, next) {
   try {
     res.json(await javs.getJavByLatest(req.query.limit));
@@ -33,19 +33,20 @@ router.get('/getrandom', async function(req, res, next) {
   }
 });
 
-
-//----------------------------
-
 /* GET Javs by order and page*/
-router.get('/getjavs', async function(req, res, next) {
+router.get('/getjavbypage', async function(req, res, next) {
   try {
-    res.json(await javs.getJavs(req.query.page,req.query.hide,req.query.variable,req.query.order));
+    res.json(await javs.getJavByPage(req.query.page));
   } catch (err) {
     console.error(`Error while getting newest Javs `, err.message);
     next(err);
   }
 });
 
+
+
+
+//----------------------------
 /* GET latest Javs by limit*/
 router.get('/getlatestjavs', async function(req, res, next) {
   try {
