@@ -17,7 +17,7 @@ const config = {
       { origin: "*", credentials: true }
     ]
   },
-  listPerPageJavs: 12,
+  listPerPageJavs: 20,
   listPerPageScenes: 20,
   listPerPageIdols: 18
 };
