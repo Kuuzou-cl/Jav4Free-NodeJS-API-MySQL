@@ -33,41 +33,25 @@ async function getCategory(id = 0) {
     }
 }
 
-async function getJavsByCategories(page = 1, name = '', order = 'desc') {
+async function getJavsByCategories(page = 1, name = '') {
     const offset = helper.getOffset(page, config.listPerPageScenes);
-    if (order != 'desc' && order != 'asc') {
-        order = 'desc'
-    }
+
     const rows = await db.query(
-        `SELECT * from jav s join jav_category sc on s.id = sc.jav_id where sc.category_id = (SELECT c.id from category c WHERE c.name = '${name}') order by s.id ${order} LIMIT ${offset},${config.listPerPageScenes}`
+        `SELECT * from jav.jav j join jav_category jc on j.id = jc.jav_id where jc.category_id = (SELECT c.id from category c WHERE c.name = '${name}') order by j.release_date desc LIMIT ${offset},${config.listPerPageScenes}`
     );
-
-    const tempId = []
-    rows.forEach(element => {
-        tempId.push(element.id);
-    });
-
-    let rowsCategories = [];
-
-    for (let index = 0; index < tempId.length; index++) {
-        rowsCategories.push(helper.emptyOrRows(await db.query(
-            `SELECT c.id, c.name FROM category c join jav_category jc on c.id = jc.category_id and jc.jav_id = ${tempId[index]} ORDER BY RAND() LIMIT 0,3`
-        )));
-    }
-
-    for (let index = 0; index < rows.length; index++) {
-        rows[index].categories = rowsCategories[index];
-    }
 
     const maxRows = await db.query(
-        `SELECT * from jav s join jav_category sc on s.id = sc.jav_id where sc.category_id = (SELECT c.id from category c WHERE c.name = '${name}') order by s.id ${order}`
+        `SELECT * from jav.jav j join jav_category jc on j.id = jc.jav_id where jc.category_id = (SELECT c.id from category c WHERE c.name = '${name}') order by j.release_date desc`
     );
-    const pagesData = helper.getCountPages(page, config.listPerPageScenes, maxRows.length);
-    const meta = { page: page, nextPage: pagesData.nextPage, lastPage: pagesData.lastPage };
+    const pagesData = helper.getCountPages(page, config.listPerPageJavs, maxRows.length);
 
     return {
-        Javs: helper.emptyOrRows(rows),
-        meta
+        Response:{
+            Javs: helper.emptyOrRows(rows),
+            page: page,
+            nextPage: pagesData.nextPage, 
+            lastPage: pagesData.lastPage
+        }
     }
 }
 

@@ -13,8 +13,6 @@ router.get('/getHotCategories', async function(req, res, next) {
   }
 });
 
-
-//----------------------------
 /* GET All Categories */
 router.get('/getCategories', async function(req, res, next) {
   try {
@@ -28,12 +26,19 @@ router.get('/getCategories', async function(req, res, next) {
 /* GET javs by Category */
 router.get('/getJavsByCategories', async function(req, res, next) {
   try {
-    res.json(await categories.getJavsByCategories(req.query.page,req.query.name,req.query.order));
+    res.json(await categories.getJavsByCategories(req.query.page,req.query.name));
   } catch (err) {
     console.error(`Error while getting Javs `, err.message);
     next(err);
   }
 });
+
+
+
+//----------------------------
+
+
+
 
 /* GET one Category */
 router.get('/getCategory', async function(req, res, next) {
