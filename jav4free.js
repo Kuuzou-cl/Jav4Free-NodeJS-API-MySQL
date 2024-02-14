@@ -3,6 +3,7 @@ const app = express();
 const port = 8080;
 const javsRouter = require("./routes/javs");
 const categoriesRouter = require("./routes/categories");
+const idolsRouter = require("./routes/idols");
 const cors = require('cors');
 
 const config = require('./config');
@@ -25,6 +26,8 @@ app.get("/", (req, res) => {
 app.use("/javs", javsRouter);
 
 app.use("/categories", categoriesRouter);
+
+app.use("/idols", idolsRouter);
 
 /* Error handler middleware */
 app.use((err, req, res, next) => {

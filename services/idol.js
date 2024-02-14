@@ -4,73 +4,62 @@ const config = require('../config');
 
 async function getRandomByLimit(limit = 1) {
     const rows = await db.query(
-        `SELECT * FROM idol order by RAND() LIMIT 0,${limit}`
+        `SELECT i.* FROM jav.idol i JOIN jav_idol ji on ji.idol_id = i.id GROUP by i.id order by RAND() LIMIT 0,${limit}`
     );
     return{
-        Idols: helper.emptyOrRows(rows)
+        Response: helper.emptyOrRows(rows)
     }
 }
 
-async function getbypage(page = 1, order = 'desc') {
+async function getbypage(page = 1) {
     const offset = helper.getOffset(page, config.listPerPageIdols);
-    if (order != 'desc' && order != 'asc') {
-        order = 'desc'
-    }
+
     const rows = await db.query(
-        `SELECT * FROM idol order by id ${order} LIMIT ${offset},${config.listPerPageIdols}`
+        `SELECT i.* FROM jav.idol i JOIN jav_idol ji on ji.idol_id = i.id GROUP by i.id order by i.name LIMIT ${offset},${config.listPerPageIdols}`
     );
     const maxRows = await db.query(
-        `SELECT * FROM idol`
+        `SELECT i.* FROM jav.idol i JOIN jav_idol ji on ji.idol_id = i.id GROUP by i.id`
     );
+
     const pagesData = helper.getCountPages(page,config.listPerPageIdols,maxRows.length);
-    const meta = { page : page, nextPage: pagesData.nextPage, lastPage: pagesData.lastPage };
 
     return {
-        Idols:helper.emptyOrRows(rows),
-        meta
+        Response:{
+            Javs: helper.emptyOrRows(rows),
+            page: page,
+            nextPage: pagesData.nextPage, 
+            lastPage: pagesData.lastPage
+        }
     }
 }
 
-async function getJavByIdol(page = 1, name = '', order = 'desc') {
+async function getJavByIdol(page = 1, name = '') {
     const offset = helper.getOffset(page, config.listPerPageScenes);
-    if (order != 'desc' && order != 'asc') {
-        order = 'desc'
-    }
+
     const rows = await db.query(
-        `SELECT * FROM jav j join jav_idol ji on j.id = ji.jav_id where ji.idol_id = (SELECT id FROM idol i where i.name = '${name}') order by j.id ${order} LIMIT ${offset},${config.listPerPageScenes}`
+        `SELECT * FROM jav.jav j join jav.jav_idol ji on j.id = ji.jav_id where ji.idol_id = (SELECT id FROM jav.idol i where i.name = '${name}') order by j.release_date desc ${offset},${config.listPerPageScenes}`
     );
-
-    const tempId = []
-    rows.forEach(element => {
-        tempId.push(element.id);
-    });
-
-    let rowsCategories = [];
-
-    for (let index = 0; index < tempId.length; index++) {
-        rowsCategories.push(helper.emptyOrRows(await db.query(
-            `SELECT c.id, c.name FROM category c join jav_category jc on c.id = jc.category_id and jc.jav_id = ${tempId[index]} ORDER BY RAND() LIMIT 0,3`
-        )));
-    }
-
-    for (let index = 0; index < rows.length; index++) {
-        rows[index].categories = rowsCategories[index];
-    }
 
     const rows2 = await db.query(
         `SELECT * FROM idol i where i.name = '${name}'`
     );
 
     const maxRows = await db.query(
-        `SELECT * FROM jav j join jav_idol ji on j.id = ji.jav_id where ji.idol_id = (SELECT id FROM idol i where i.name = '${name}')`
+        `SELECT * FROM jav.jav j join jav.jav_idol ji on j.id = ji.jav_id where ji.idol_id = (SELECT id FROM jav.idol i where i.name = '${name}')`
     );
+    
     const pagesData = helper.getCountPages(page,config.listPerPageScenes,maxRows.length);
     const meta = { page : page, nextPage: pagesData.nextPage, lastPage: pagesData.lastPage };
 
     return {
-        Idol: helper.emptyOrRows(rows2[0]),
-        Javs :helper.emptyOrRows(rows),
-        meta
+        Response:{
+            Idol: helper.emptyOrRows(rows2[0]),
+            Javs: helper.emptyOrRows(rows),
+            page: page,
+            nextPage: pagesData.nextPage, 
+            lastPage: pagesData.lastPage
+        }
+        
     }
 }
 

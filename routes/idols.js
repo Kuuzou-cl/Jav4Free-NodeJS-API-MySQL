@@ -15,7 +15,7 @@ router.get('/getrandombylimit', async function(req, res, next) {
 
 router.get('/getidolbypage', async function(req, res, next) {
   try {
-    res.json(await idols.getbypage(req.query.page,req.query.order));
+    res.json(await idols.getbypage(req.query.page));
   } catch (err) {
     console.error(`Error while getting Idols `, err.message);
     next(err);
@@ -24,7 +24,7 @@ router.get('/getidolbypage', async function(req, res, next) {
 
 router.get('/getjavbyidol', async function(req, res, next) {
   try {
-    res.json(await idols.getJavByIdol(req.query.page,req.query.name,req.query.order));
+    res.json(await idols.getJavByIdol(req.query.page,req.query.name));
   } catch (err) {
     console.error(`Error while getting Idols `, err.message);
     next(err);
@@ -32,7 +32,7 @@ router.get('/getjavbyidol', async function(req, res, next) {
 });
 
 
-
+//----------------------------
 
 
 
