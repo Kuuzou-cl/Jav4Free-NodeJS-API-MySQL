@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 
 async function login(email, password) {
     const rows = await db.query(
-        `SELECT * FROM user WHERE email = '${email}' and pswd = AES_ENCRYPT('${password}', 'syny')`
+        `SELECT * FROM jav.user WHERE email = '${email}' and pswd = AES_ENCRYPT('${password}', 'syny')`
     );
     const data = helper.emptyOrRows(rows);
     if (data[0]) {
