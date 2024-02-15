@@ -94,6 +94,29 @@ async function getJavByPage(page = 1) {
     }
 }
 
+async function getAllJavByPage(page = 1) {
+    const offset = helper.getOffset(page, config.listPerPageJavs);
+
+    const rows = await db.query(
+        `SELECT * FROM jav.jav j order by release_date desc LIMIT ${offset},${config.listPerPageJavs}`
+    );
+
+    const maxRows = await db.query(
+        `SELECT * FROM jav.jav j`
+    );
+
+    const pagesData = helper.getCountPages(page, config.listPerPageJavs, maxRows.length);
+
+    return {
+        Response:{
+            Javs: helper.emptyOrRows(rows),
+            page: page,
+            nextPage: pagesData.nextPage, 
+            lastPage: pagesData.lastPage
+        }
+    }
+}
+
 
 //old
 async function getJavById(id = 1) {
@@ -291,6 +314,7 @@ module.exports = {
     getJavByCode,
     getJavByRand,
     getJavByPage,
+    getAllJavByPage,
     //
     getJavById,    
     getJavsByLatest,

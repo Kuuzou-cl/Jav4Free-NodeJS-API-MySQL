@@ -44,6 +44,16 @@ router.get('/getjavbypage', async function(req, res, next) {
 });
 
 
+/* GET all Javs by order and page*/
+router.get('/getalljavbypage', async function(req, res, next) {
+  try {
+    res.json(await javs.getAllJavByPage(req.query.page));
+  } catch (err) {
+    console.error(`Error while getting newest Javs `, err.message);
+    next(err);
+  }
+});
+
 
 
 //----------------------------

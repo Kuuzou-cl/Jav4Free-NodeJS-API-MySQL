@@ -33,23 +33,6 @@ router.get('/getJavsByCategories', async function(req, res, next) {
   }
 });
 
-
-
-//----------------------------
-
-
-
-
-/* GET one Category */
-router.get('/getCategory', async function(req, res, next) {
-  try {
-    res.json(await categories.getCategory(req.query.id));
-  } catch (err) {
-    console.error(`Error while getting Category `, err.message);
-    next(err);
-  }
-});
-
 /* new category */
 router.post('/newCategory', helper.isLoggedIn, async function (req, res, next) {
   try {
