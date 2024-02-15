@@ -54,6 +54,16 @@ router.get('/getalljavbypage', async function(req, res, next) {
   }
 });
 
+/* GET Javs by code*/
+router.get('/getjavbyid', async function(req, res, next) {
+  try {
+    res.json(await javs.getJavById(req.query.id));
+  } catch (err) {
+    console.error(`Error while getting newest Javs `, err.message);
+    next(err);
+  }
+});
+
 
 
 //----------------------------

@@ -117,30 +117,30 @@ async function getAllJavByPage(page = 1) {
     }
 }
 
-
-//old
-async function getJavById(id = 1) {
+async function getJavById(id = 0) {
 
     const rowsJav = await db.query(
-        `SELECT id, code, title, length, DATE_FORMAT(release_date, "%M %d %Y"), poster, video FROM jav j where j.id = '${id}'`
-    );
-    const rowsCategories = await db.query(
-        `SELECT c.id, c.name from category c join jav_category jc on c.id = jc.category_id where jc.jav_id = '${id}'`
-    );
-    const rowsIdols = await db.query(
-        `SELECT i.id, i.name, i.poster from idol i join jav_idol ji on ji.idol_id = i.id WHERE ji.jav_id = '${id}'`
-    );
-    const rowsProducer = await db.query(
-        `SELECT p.id, p.name from producer p join jav_producer pi on pi.producer_id = p.id WHERE pi.jav_id = '${id}'`
+        `SELECT * FROM jav j where j.id = '${id}'`
     );
 
+    if (rowsJav[0]) {
+        const rowsCategories = await db.query(
+            `SELECT * from category c join jav_category jc on c.id = jc.category_id where jc.jav_id = (SELECT id FROM jav j where j.id = '${id}')`
+        );
+        rowsJav[0].categories = helper.emptyOrRows(rowsCategories);
+        const rowsIdols = await db.query(
+            `SELECT * from idol i join jav_idol ji on ji.idol_id = i.id WHERE ji.jav_id = (SELECT id FROM jav j where j.id = '${id}')`
+        );
+        rowsJav[0].idols = helper.emptyOrRows(rowsIdols);
+    }
+
     return {
-        Jav: helper.emptyOrRows(rowsJav[0]),
-        Categories: helper.emptyOrRows(rowsCategories),
-        Idols: helper.emptyOrRows(rowsIdols),
-        Producer: helper.emptyOrRows(rowsProducer[0])
+        Response: helper.emptyOrRows(rowsJav[0])
     }
 }
+
+//old
+
 
 
 
