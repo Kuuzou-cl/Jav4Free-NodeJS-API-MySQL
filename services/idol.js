@@ -37,7 +37,7 @@ async function getJavByIdol(page = 1, name = '') {
     const offset = helper.getOffset(page, config.listPerPageScenes);
 
     const rows = await db.query(
-        `SELECT * FROM jav.jav j join jav.jav_idol ji on j.id = ji.jav_id where ji.idol_id = (SELECT id FROM jav.idol i where i.name = '${name}') order by j.release_date desc ${offset},${config.listPerPageScenes}`
+        `SELECT * FROM jav.jav j join jav.jav_idol ji on j.id = ji.jav_id where ji.idol_id = (SELECT id FROM jav.idol i where i.name = '${name}') order by j.release_date desc LIMIT ${offset},${config.listPerPageScenes}`
     );
 
     const rows2 = await db.query(
@@ -49,7 +49,6 @@ async function getJavByIdol(page = 1, name = '') {
     );
     
     const pagesData = helper.getCountPages(page,config.listPerPageScenes,maxRows.length);
-    const meta = { page : page, nextPage: pagesData.nextPage, lastPage: pagesData.lastPage };
 
     return {
         Response:{
