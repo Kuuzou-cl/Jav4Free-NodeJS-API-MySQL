@@ -25,7 +25,7 @@ async function getbypage(page = 1) {
 
     return {
         Response:{
-            Javs: helper.emptyOrRows(rows),
+            Idols: helper.emptyOrRows(rows),
             page: page,
             nextPage: pagesData.nextPage, 
             lastPage: pagesData.lastPage
