@@ -120,7 +120,7 @@ async function getAllJavByPage(page = 1) {
 async function getJavById(id = 0) {
 
     const rowsJav = await db.query(
-        `SELECT * FROM jav j where j.id = '${id}'`
+        `SELECT id, code, title, DATE_FORMAT(release_date,'%Y-%m-%d') as release_date, video,static, preview, poster,vtt,hide FROM jav.jav j where j.id = '${id}'`
     );
 
     if (rowsJav[0]) {
