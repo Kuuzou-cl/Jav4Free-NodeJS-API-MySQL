@@ -189,111 +189,29 @@ async function updateJav(id = 0, title = 'error', code = 'error', release_date =
     }
 }
 
-
-
-
-
-
-
-
-//old
-
-
-
-
-
-async function getJavsByLatest(limit = 1) {
+async function newJav(title = 'error', code = 'error', release_date = 'error', video = '', static = '', preview = '', poster = '', vtt = '', hide = 1, categories = [], idols = []) {
     const rows = await db.query(
-        `SELECT * FROM jav WHERE hide = 0 order by id desc LIMIT 0,${limit}`
-    );
-
-    const tempId = []
-    rows.forEach(element => {
-        tempId.push(element.id);
-    });
-
-    let rowsCategories = [];
-
-    for (let index = 0; index < tempId.length; index++) {
-        rowsCategories.push(helper.emptyOrRows(await db.query(
-            `SELECT c.id, c.name FROM category c join jav_category jc on c.id = jc.category_id and jc.jav_id = ${tempId[index]} ORDER BY RAND() LIMIT 0,3`
-        )));
-    }
-
-    for (let index = 0; index < rows.length; index++) {
-        rows[index].categories = rowsCategories[index];
-    }
-
-
-    return {
-        Javs: helper.emptyOrRows(rows)
-    }
-}
-
-async function getJavViewById(id = 0) {
-    const rows = await db.query(
-        `INSERT INTO jav_view (jav_id) VALUES (${id})`
-    );
-    return {
-        result: helper.emptyOrRows(rows)
-    }
-}
-
-//------------------------------------------------------
-
-async function getRelatedJavsV2(id = 211, limit = 1) {
-    const rows = await db.query(
-        `SELECT j.*, (
-	        SELECT count(c1.id) FROM Category c1 JOIN JavCategory jc ON c1.id = jc.categoryId WHERE jc.javId = j.id and c1.id IN (
-		        SELECT c2.id FROM Category c2 JOIN JavCategory jc2 ON c2.id = jc2.categoryId WHERE jc2.javId = ${id})) as matchCount from Jav j where id <> ${id}
-        order by matchCount desc, j.creation desc limit ${limit}`
-    );
-
-    const tempId = []
-    rows.forEach(element => {
-        tempId.push(element.id);
-    });
-
-    let rowsCategories = [];
-
-    for (let index = 0; index < tempId.length; index++) {
-        rowsCategories.push(helper.emptyOrRows(await db.query(
-            `SELECT c.id, c.name FROM Category c join JavCategory jc on c.id = jc.categoryId and jc.javId = ${tempId[index]} ORDER BY RAND() LIMIT 0,3`
-        )));
-    }
-
-    for (let index = 0; index < rows.length; index++) {
-        rows[index].categories = rowsCategories[index];
-    }
-
-    return {
-        Javs: helper.emptyOrRows(rows)
-    }
-}
-
-async function newJavV2(title = 'error', code = 'error', image = 'error', hide = 1, categories = [], idols = []) {
-    const rows = await db.query(
-        `SELECT * FROM Jav where code = '${code}'`
+        `SELECT * FROM jav.jav where code = '${code}'`
     );
     const data = { Javs: helper.emptyOrRows(rows) };
 
     if (data.Javs.length == 0) {
         const result = await db.query(
-            `INSERT INTO Jav (title,code,image,hide) VALUES ('${title}','${code}','${image}',${hide})`
+            `INSERT INTO jav.jav (title,code,release_date,video,static,preview,poster,vtt,hide) VALUES ('${title}','${code}','${release_date}','${video}','${static}','${preview}','${poster}','${vtt}',${hide})`
         );
         const newRows = await db.query(
-            `SELECT * FROM Jav where id = '${result.insertId}'`
+            `SELECT * FROM jav.jav where id = '${result.insertId}'`
         );
 
         categories.forEach(async category => {
             const resultCategory = await db.query(
-                `INSERT INTO JavCategory (javId,categoryId) VALUES (${result.insertId},${category})`
+                `INSERT INTO jav_category (jav_id,category_id) VALUES (${result.insertId},${category.id})`
             );
         });
 
         idols.forEach(async idol => {
             const resultIdol = await db.query(
-                `INSERT INTO JavIdol (javId,idolId) VALUES (${result.insertId},${idol})`
+                `INSERT INTO jav_idol (jav_id,idol_id) VALUES (${result.insertId},${idol.id})`
             );
         });
         return {
@@ -314,12 +232,7 @@ module.exports = {
     getJavByRand,
     getJavByPage,
     getAllJavByPage,
+    getJavById,
     updateJav,
-    //
-    getJavById,    
-    getJavsByLatest,
-    getJavViewById,
-    //
-    getRelatedJavsV2,
-    newJavV2
+    newJav
 }
