@@ -19,7 +19,7 @@ async function getCategories() {
     );
 
     return {
-        Categories: helper.emptyOrRows(rows)
+        Response: helper.emptyOrRows(rows)
     }
 }
 
@@ -29,7 +29,7 @@ async function getCategory(id = 0) {
     );
 
     return {
-        Category: helper.emptyOrRows(rows[0])
+        Response: helper.emptyOrRows(rows[0])
     }
 }
 
@@ -104,7 +104,7 @@ async function updateCategory(id = 0, name = '') {
             `SELECT * FROM category where id = '${id}'`
         );
         return {
-            Category: helper.emptyOrRows(newRows), meta: result
+            Response: helper.emptyOrRows(newRows), meta: result
         }
     } else {
         return {

@@ -62,6 +62,16 @@ async function getJavByIdol(page = 1, name = '') {
     }
 }
 
+async function getAll() {
+    const rows = await db.query(
+        `SELECT * FROM jav.idol i order by i.name`
+    );
+
+    return {
+        Response: helper.emptyOrRows(rows)
+    }
+}
+
 //--------------------------------------------------------------------
 
 
@@ -122,6 +132,7 @@ module.exports = {
     getRandomByLimit,
     getbypage,
     getJavByIdol,
+    getAll,
     //
     newIdolV2,
     updateIdolV2

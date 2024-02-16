@@ -31,6 +31,15 @@ router.get('/getjavbyidol', async function(req, res, next) {
   }
 });
 
+router.get('/getIdols', async function(req, res, next) {
+  try {
+    res.json(await idols.getAll());
+  } catch (err) {
+    console.error(`Error while getting Idols `, err.message);
+    next(err);
+  }
+});
+
 
 //----------------------------
 
@@ -66,15 +75,6 @@ router.get('/featured', async function(req, res, next) {
   }
 });
 
-/* GET all Idols */
-router.get('/getAll', async function(req, res, next) {
-  try {
-    res.json(await idols.getAll());
-  } catch (err) {
-    console.error(`Error while getting Idols `, err.message);
-    next(err);
-  }
-});
 
 /* new idol */
 router.post('/newIdol', helper.isLoggedIn, async function (req, res, next) {
