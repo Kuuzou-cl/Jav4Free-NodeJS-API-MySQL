@@ -139,6 +139,63 @@ async function getJavById(id = 0) {
     }
 }
 
+async function updateJav(id = 0, title = 'error', code = 'error', release_date = 'error', video = '', static = '', preview = '', poster = '', vtt = '', hide = 1, categories = [], idols = []) {
+
+    const rows = await db.query(
+        `SELECT * FROM jav.jav where id = ${id}`
+    );
+    const data = { Javs: helper.emptyOrRows(rows) };
+
+    const rows2 = await db.query(
+        `SELECT * FROM jav.jav where code = '${code}'`
+    );
+    const data2 = { Javs: helper.emptyOrRows(rows2) };
+
+    if (data.Javs.length > 0 && (data2.Javs.length == 0 || data.Javs[0].id == data2.Javs[0].id)) {
+        const result = await db.query(
+            `UPDATE jav.jav set code = '${code}', title = '${title}', release_date = ${release_date}, video = '${video}', static = ${static}, preview = ${preview}, poster = ${poster}, vtt = ${vtt}, hide = ${hide} WHERE id = ${id}`
+        );
+        const newRows = await db.query(
+            `SELECT * FROM jav.jav where id = ${id}`
+        );
+
+        const deleteCategories = await db.query(
+            `DELETE FROM jav_category WHERE jav_id = ${id}`
+        );
+
+        categories.forEach(async category => {
+            const resultCategory = await db.query(
+                `INSERT INTO jav_category (jav_id,category_id) VALUES (${id},${category.id})`
+            );
+        });
+
+        const deleteIdol = await db.query(
+            `DELETE FROM jav_idol WHERE jav_id = ${id}`
+        );
+
+        idols.forEach(async idol => {
+            const resultIdol = await db.query(
+                `INSERT INTO jav_idol (jav_id,idol_id) VALUES (${id},${idol.id})`
+            );
+        });
+
+        return {
+            Jav: helper.emptyOrRows(newRows), meta: result
+        }
+    } else {
+        return {
+            error: 'Duplicated Jav code!'
+        }
+    }
+}
+
+
+
+
+
+
+
+
 //old
 
 
@@ -249,65 +306,7 @@ async function newJavV2(title = 'error', code = 'error', image = 'error', hide =
     }
 }
 
-async function updateJavV2(id = 0, title = 'error', code = 'error', image = 'error', hide = 1, categories = [], idols = [], scenes = []) {
 
-    const rows = await db.query(
-        `SELECT * FROM Jav where id = ${id}`
-    );
-    const data = { Javs: helper.emptyOrRows(rows) };
-
-    const rows2 = await db.query(
-        `SELECT * FROM Jav where code = '${code}'`
-    );
-    const data2 = { Javs: helper.emptyOrRows(rows2) };
-
-    if (data.Javs.length > 0 && (data2.Javs.length == 0 || data.Javs[0].id == data2.Javs[0].id)) {
-        const result = await db.query(
-            `UPDATE Jav set title = '${title}', code = '${code}', image = '${image}', hide = ${hide} WHERE id = ${id}`
-        );
-        const newRows = await db.query(
-            `SELECT * FROM Jav where id = ${id}`
-        );
-
-        const deleteCategories = await db.query(
-            `DELETE FROM JavCategory WHERE javId = ${id}`
-        );
-
-        categories.forEach(async category => {
-            const resultCategory = await db.query(
-                `INSERT INTO JavCategory (javId,categoryId) VALUES (${id},${category.id})`
-            );
-        });
-
-        const deleteIdol = await db.query(
-            `DELETE FROM JavIdol WHERE javId = ${id}`
-        );
-
-        idols.forEach(async idol => {
-            const resultIdol = await db.query(
-                `INSERT INTO JavIdol (javId,idolId) VALUES (${id},${idol.id})`
-            );
-        });
-
-        const deleteScene = await db.query(
-            `DELETE FROM JavScene WHERE javId = ${id}`
-        );
-
-        scenes.forEach(async scene => {
-            const resultScene = await db.query(
-                `INSERT INTO JavScene (javId,sceneId) VALUES (${id},${scene.id})`
-            );
-        });
-
-        return {
-            Jav: helper.emptyOrRows(newRows), meta: result
-        }
-    } else {
-        return {
-            error: 'Duplicated Jav code!'
-        }
-    }
-}
 
 module.exports = {
     getJavByLatest,
@@ -315,13 +314,12 @@ module.exports = {
     getJavByRand,
     getJavByPage,
     getAllJavByPage,
+    updateJav,
     //
     getJavById,    
     getJavsByLatest,
     getJavViewById,
     //
     getRelatedJavsV2,
-    newJavV2,
-    updateJavV2,
-
+    newJavV2
 }

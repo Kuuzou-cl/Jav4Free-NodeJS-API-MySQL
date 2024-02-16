@@ -64,6 +64,17 @@ router.get('/getjavbyid', async function(req, res, next) {
   }
 });
 
+/* Patch Javs by id*/
+router.patch('/updateJav', helper.isLoggedIn, async function (req, res, next) {
+  try {
+    res.json(await javs.updateJav(req.body.id,req.body.title,req.body.code,req.body.release_date,req.body.video,req.body.static,req.body.preview,req.body.poster,req.body.vtt,req.body.hide,req.body.categories,req.body.idols));  
+  } catch (error) {
+    next(error)
+  }
+});
+
+
+
 
 
 //----------------------------
@@ -142,14 +153,6 @@ router.post('/newJav', helper.isLoggedIn, async function (req, res, next) {
   }
 });
 
-/* update jav */
-router.patch('/updateJav', helper.isLoggedIn, async function (req, res, next) {
-  try {
-    res.json(await javs.updateJav(req.body.id,req.body.title,req.body.code,req.body.image,req.body.hide,req.body.categories,req.body.idols, req.body.scenes));  
-  } catch (error) {
-    next(error)
-  }
-});
 
 /* New petitions V2 APP NUXT3 ---------------------------------------------------------------------------------------------------- */
 
@@ -206,13 +209,7 @@ router.post('/newJavv2', helper.isLoggedIn, async function (req, res, next) {
   }
 });
 
-router.patch('/updateJavv2', helper.isLoggedIn, async function (req, res, next) {
-  try {
-    res.json(await javs.updateJavV2(req.body.id,req.body.title,req.body.code,req.body.image,req.body.hide,req.body.categories,req.body.idols, req.body.scenes));  
-  } catch (error) {
-    next(error)
-  }
-});
+
 
 router.get('/relatedJavsv2', async function (req, res, next) {
   try {
