@@ -153,7 +153,7 @@ async function updateJav(id = 0, title = 'error', code = 'error', release_date =
 
     if (data.Javs.length > 0 && (data2.Javs.length == 0 || data.Javs[0].id == data2.Javs[0].id)) {
         const result = await db.query(
-            `UPDATE jav.jav set code = '${code}', title = '${title}', release_date = ${release_date}, video = '${video}', static = ${static}, preview = ${preview}, poster = ${poster}, vtt = ${vtt}, hide = ${hide} WHERE id = ${id}`
+            `UPDATE jav.jav set code = '${code}', title = '${title}', release_date = '${release_date}', video = '${video}', static = '${static}', preview = '${preview}', poster = '${poster}', vtt = '${vtt}', hide = ${hide} WHERE id = ${id}`
         );
         const newRows = await db.query(
             `SELECT * FROM jav.jav where id = ${id}`
