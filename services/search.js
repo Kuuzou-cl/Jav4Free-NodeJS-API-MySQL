@@ -31,7 +31,7 @@ async function getSearch(keyword = "" , page = 1) {
     }
 
     //Search if word is a category
-    const queryByCategory = 'SELECT * FROM jav.jav j JOIN jav_category jc on j.id = jc.jav_id JOIN jav.cateogry c on c.id = jc.category_id WHERE c.name LIKE ?';
+    const queryByCategory = 'SELECT * FROM jav.jav j JOIN jav_category jc on j.id = jc.jav_id JOIN jav.category c on c.id = jc.category_id WHERE c.name LIKE ?';
     for (let index = 0; index < splitted.length; index++) {
         let rowsByCategories = await db.query(queryByCategory, [splitted[index]]);
         for (let indexb = 0; indexb < helper.emptyOrRows(rowsByCategories).length; indexb++) {
