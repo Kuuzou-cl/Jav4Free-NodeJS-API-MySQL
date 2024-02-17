@@ -5,6 +5,7 @@ const javsRouter = require("./routes/javs");
 const categoriesRouter = require("./routes/categories");
 const idolsRouter = require("./routes/idols");
 const usersRouter = require("./routes/users");
+const searchesRouter = require("./routes/searches");
 const cors = require('cors');
 
 const config = require('./config');
@@ -31,6 +32,8 @@ app.use("/categories", categoriesRouter);
 app.use("/idols", idolsRouter);
 
 app.use("/users", usersRouter);
+
+app.use("/search", searchesRouter);
 
 /* Error handler middleware */
 app.use((err, req, res, next) => {
