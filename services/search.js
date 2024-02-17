@@ -2,12 +2,24 @@ const db = require('./db');
 const helper = require('../helper');
 const config = require('../config');
 
-async function getSearchV2(title, page = 1) {
-    const splitted = title.split(' ');
+async function getSearch(keyword = "" , page = 1) {
+    const splitted = keyword.split(' ');
     let rows = [];
 
+    //Search if word is in code
+    const queryByCode = 'SELECT * FROM jav.jav j WHERE j.code LIKE ?';
+    for (let index = 0; index < splitted.length; index++) {
+        let tempString = '%' + splitted[index] + '%';
+        let rowsByTitle = await db.query(queryByCode, [tempString]);
+        for (let indexb = 0; indexb < helper.emptyOrRows(rowsByTitle).length; indexb++) {
+            if (!rows.some(item => item.id === rowsByTitle[indexb].id)) {
+                rows.push(rowsByTitle[indexb]);
+            }
+        }
+    }
+
     //Search if word is in title
-    const queryByTitle = 'SELECT s.* FROM Scene s WHERE s.title LIKE ?';
+    const queryByTitle = 'SELECT * FROM jav.jav j WHERE j.title LIKE ?';
     for (let index = 0; index < splitted.length; index++) {
         let tempString = '%' + splitted[index] + '%';
         let rowsByTitle = await db.query(queryByTitle, [tempString]);
@@ -19,7 +31,7 @@ async function getSearchV2(title, page = 1) {
     }
 
     //Search if word is a category
-    const queryByCategory = 'SELECT s.* FROM Scene s JOIN SceneCategory sc on s.id = sc.sceneId JOIN Category c on c.id = sc.categoryId WHERE c.name LIKE ?';
+    const queryByCategory = 'SELECT * FROM jav.jav j JOIN jav_category jc on j.id = jc.jav_id JOIN jav.cateogry c on c.id = jc.category_id WHERE c.name LIKE ?';
     for (let index = 0; index < splitted.length; index++) {
         let rowsByCategories = await db.query(queryByCategory, [splitted[index]]);
         for (let indexb = 0; indexb < helper.emptyOrRows(rowsByCategories).length; indexb++) {
@@ -30,7 +42,7 @@ async function getSearchV2(title, page = 1) {
     }
 
     //Search if word is an idol
-    const queryByIdol = 'SELECT s.* from Scene s JOIN SceneIdol si on s.id = si.sceneId JOIN Idol i on i.id = si.idolId where i.name LIKE ?';
+    const queryByIdol = 'SELECT * from jav.jav j JOIN jav_idol ji on j.id = ji.jav_id JOIN jav.idol i on i.id = ji.idol_id where i.name LIKE ?';
     for (let index = 0; index < splitted.length; index++) {
         let rowsByIdols = await db.query(queryByIdol, [splitted[index]]);
         for (let indexb = 0; indexb < helper.emptyOrRows(rowsByIdols).length; indexb++) {
@@ -41,18 +53,21 @@ async function getSearchV2(title, page = 1) {
     }
 
     const pagesData = helper.getCountPages(page,config.listPerPageScenes,rows.length);
-    const meta = { page : page, nextPage: pagesData.nextPage, lastPage: pagesData.lastPage };
 
     if (rows.length > 0) {
         rows = rows.slice((page - 1) * config.listPerPageScenes,(config.listPerPageScenes * page))
     }
 
     return {
-        Scenes : helper.emptyOrRows(rows),
-        meta
+        Response:{
+            Javs: helper.emptyOrRows(rows),
+            page: page,
+            nextPage: pagesData.nextPage, 
+            lastPage: pagesData.lastPage
+        }
     }
 }
 
 module.exports = {
-    getSearchV2
+    getSearch
 }
