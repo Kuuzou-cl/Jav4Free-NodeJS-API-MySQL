@@ -244,15 +244,10 @@ async function generateUploadUrl() {
     let urlResult = "";
     let urlError = "";
 
-    await fetch("https://api.cloudflare.com/client/v4/accounts/70e8c8aff115acf6bcc8cd9998cdda6e/images/v2/direct_upload", requestOptions)
-        .then((response) => urlResponse = response)
-        .then((result) => urlResult = result)
-        .catch((error) => urlError = error);
+    const { data: urlData } = await fetch("https://api.cloudflare.com/client/v4/accounts/70e8c8aff115acf6bcc8cd9998cdda6e/images/v2/direct_upload", requestOptions);
 
     return {
-        Response: {
-            urlResponse: urlResponse, urlResult: urlResult, urlError: urlError
-        }
+        Response: urlData
     }
 }
 
