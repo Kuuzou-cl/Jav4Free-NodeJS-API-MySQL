@@ -240,9 +240,9 @@ async function generateUploadUrl() {
         redirect: "follow"
     };
 
-    const urlResponse = "";
-    const urlResult = "";
-    const urlError = "";
+    let urlResponse = "";
+    let urlResult = "";
+    let urlError = "";
 
     await fetch("https://api.cloudflare.com/client/v4/accounts/70e8c8aff115acf6bcc8cd9998cdda6e/images/v2/direct_upload", requestOptions)
         .then((response) => urlResponse = response.text())
