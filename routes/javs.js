@@ -76,7 +76,16 @@ router.patch('/updateJav', helper.isLoggedIn, async function (req, res, next) {
 /* Create Javs*/
 router.post('/newJav', helper.isLoggedIn, async function (req, res, next) {
   try {
-    res.json(await javs.newJavV2(req.body.title,req.body.code,req.body.image,req.body.hide,req.body.categories,req.body.idols));  
+    res.json(await javs.newJav(req.body.title,req.body.code,req.body.image,req.body.hide,req.body.categories,req.body.idols));  
+  } catch (error) {
+    next(error)
+  }
+});
+
+/* New Image Javs*/
+router.post('/generateUploadUrl', helper.isLoggedIn, async function (req, res, next) {
+  try {
+    res.json(await javs.generateUploadUrl());  
   } catch (error) {
     next(error)
   }

@@ -85,10 +85,10 @@ async function getJavByPage(page = 1) {
     const pagesData = helper.getCountPages(page, config.listPerPageJavs, maxRows.length);
 
     return {
-        Response:{
+        Response: {
             Javs: helper.emptyOrRows(rows),
             page: page,
-            nextPage: pagesData.nextPage, 
+            nextPage: pagesData.nextPage,
             lastPage: pagesData.lastPage
         }
     }
@@ -108,10 +108,10 @@ async function getAllJavByPage(page = 1) {
     const pagesData = helper.getCountPages(page, config.listPerPageJavs, maxRows.length);
 
     return {
-        Response:{
+        Response: {
             Javs: helper.emptyOrRows(rows),
             page: page,
-            nextPage: pagesData.nextPage, 
+            nextPage: pagesData.nextPage,
             lastPage: pagesData.lastPage
         }
     }
@@ -224,6 +224,37 @@ async function newJav(title = 'error', code = 'error', release_date = 'error', v
     }
 }
 
+async function generateUploadUrl() {
+    const myHeaders = new Headers();
+    myHeaders.append("Authorization", "Bearer SxkdTrqEFxljuD2kaRgQbEG2G78oXMwNqHxStiSp");
+    myHeaders.append("Cookie", "__cflb=0H28vgHxwvgAQtjUGUFqYFDiSDreGJnV2DqXwDAyEKF");
+
+    const formdata = new FormData();
+    formdata.append("requireSignedURLs", "True");
+    formdata.append("metadata", "{\"key\":\"value\"}");
+
+    const requestOptions = {
+        method: "POST",
+        headers: myHeaders,
+        body: formdata,
+        redirect: "follow"
+    };
+
+    const urlResponse = "";
+    const urlResult = "";
+    const urlError = "";
+
+    await fetch("https://api.cloudflare.com/client/v4/accounts/70e8c8aff115acf6bcc8cd9998cdda6e/images/v2/direct_upload", requestOptions)
+        .then((response) => urlResponse = response.text())
+        .then((result) => urlResult = result)
+        .catch((error) => urlError = error);
+
+    return {
+        Response: {
+            urlResponse: urlResponse, urlResult: urlResult, urlError: urlError
+        }
+    }
+}
 
 
 module.exports = {
@@ -234,5 +265,6 @@ module.exports = {
     getAllJavByPage,
     getJavById,
     updateJav,
-    newJav
+    newJav,
+    generateUploadUrl
 }
