@@ -42,7 +42,8 @@ async function listBucket() {
     let javNotIncluded = [];
 
     for (let index = 0; index < javObjects.length; index++) {
-        if (!rows.some(item => item.code === javObjects[index])) {
+        let code = javObjects[index].split('/');
+        if (!rows.some(item => item.code === code[0])) {
             javNotIncluded.push(javObjects[index]);
         }
     }
