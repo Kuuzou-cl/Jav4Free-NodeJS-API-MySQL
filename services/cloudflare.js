@@ -19,7 +19,7 @@ async function listBucket() {
     let continueWhile = true;
 
     while (continueWhile) {
-        let filesS3 = await s3.listObjectsV2({ Bucket: 'jav4free-s3-data', ContinuationToken: continuationToken }).promise();
+        let filesS3 = await s3.listObjectsV2({ Bucket: 'jav', ContinuationToken: continuationToken }).promise();
         objectsS3.push(...filesS3.Contents.map(file => file.Key));
         continuationToken = filesS3.NextContinuationToken;
         continueWhile = filesS3.IsTruncated;
@@ -28,7 +28,7 @@ async function listBucket() {
     let javObjects = [];
 
     for (let index = 0; index < objectsS3.length; index++) {
-        if (objectsS3[index].includes('jav/')) {
+        if (objectsS3[index].includes('.mp4')) {
             javObjects.push(objectsS3[index]);
         }
     }
