@@ -2,8 +2,8 @@ const db = require('./db');
 const helper = require('../helper');
 const config = require('../config');
 const aws = require('aws-sdk')
-var multer = require('multer')
-var multerS3 = require('multer-s3')
+//var multer = require('multer')
+//var multerS3 = require('multer-s3')
 
 const spacesEndpoint = new aws.Endpoint('https://70e8c8aff115acf6bcc8cd9998cdda6e.r2.cloudflarestorage.com');
 //token value _B7GPHejZOyu3Nkp3FmBQWMvIAGDEZobnPRT7mQE
