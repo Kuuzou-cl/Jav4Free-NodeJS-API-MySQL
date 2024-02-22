@@ -44,7 +44,7 @@ async function listBucket() {
     for (let index = 0; index < javObjects.length; index++) {
         let code = javObjects[index].split('/');
         if (!rows.some(item => item.code === code[0])) {
-            javNotIncluded.push(javObjects[index]);
+            javNotIncluded.push(javObjects[index].split('/'));
         }
     }
 
