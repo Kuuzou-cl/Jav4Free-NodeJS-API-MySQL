@@ -5,11 +5,12 @@ const aws = require('aws-sdk')
 var multer = require('multer')
 var multerS3 = require('multer-s3')
 
-const spacesEndpoint = new aws.Endpoint('s3.amazonaws.com');
+const spacesEndpoint = new aws.Endpoint('https://70e8c8aff115acf6bcc8cd9998cdda6e.r2.cloudflarestorage.com');
+//token value _B7GPHejZOyu3Nkp3FmBQWMvIAGDEZobnPRT7mQE
 const s3 = new aws.S3({
     endpoint: spacesEndpoint,
-    accessKeyId: 'AKIATFEAPAONSNFVTAEW',
-    secretAccessKey: '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',
+    accessKeyId: '6f35d27b7c9d0b3285c72a4f3eac6477',
+    secretAccessKey: 'ac2ff2089de6bd3c1a3ad1e8b803276dbf43513417cb1780130200840d33b823',
 });
 
 async function listBucket() {
