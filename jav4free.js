@@ -6,6 +6,7 @@ const categoriesRouter = require("./routes/categories");
 const idolsRouter = require("./routes/idols");
 const usersRouter = require("./routes/users");
 const searchesRouter = require("./routes/searches");
+const cloudflareRouter = require("./routes/cloudflare");
 const cors = require('cors');
 
 const config = require('./config');
@@ -34,6 +35,8 @@ app.use("/idols", idolsRouter);
 app.use("/users", usersRouter);
 
 app.use("/search", searchesRouter);
+
+app.use("/cloudflare", cloudflareRouter);
 
 /* Error handler middleware */
 app.use((err, req, res, next) => {
