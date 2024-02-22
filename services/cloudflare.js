@@ -28,8 +28,22 @@ async function listBucket() {
     let javObjects = [];
 
     for (let index = 0; index < objectsS3.length; index++) {
-        if (objectsS3[index].includes('.mp4')) {
+        if (objectsS3[index].includes('.mp4') && !objectsS3[index].includes('-preview')) {
             javObjects.push(objectsS3[index]);
+        }
+    }
+
+    let rows = await db.query(
+        `select j.code from jav.jav j`
+    );
+
+    rows = helper.emptyOrRows(rows);
+
+    let javNotIncluded = [];
+
+    for (let index = 0; index < javObjects.length; index++) {
+        if (!rows.some(item => item.code === javObjects[index])) {
+            javNotIncluded.push(javObjects[index]);
         }
     }
 
@@ -37,8 +51,7 @@ async function listBucket() {
 
     return {
         Response: {
-            objectsS3: objectsS3,
-            javObjects: javObjects
+            javObjects: javNotIncluded
         }
     }
 }
