@@ -189,7 +189,7 @@ async function updateJav(id = 0, title = 'error', code = 'error', release_date =
     }
 }
 
-async function newJav(title = 'error', code = 'error', release_date = 'error', video = '', static = '', preview = '', poster = '', vtt = '', hide = 1, categories = [], idols = []) {
+async function newJav(title = 'error', code = 'error', release_date = 'error', poster = '', hide = 1, categories = [], idols = []) {
     const rows = await db.query(
         `SELECT * FROM jav.jav where code = '${code}'`
     );
@@ -197,7 +197,7 @@ async function newJav(title = 'error', code = 'error', release_date = 'error', v
 
     if (data.Javs.length == 0) {
         const result = await db.query(
-            `INSERT INTO jav.jav (title,code,release_date,video,static,preview,poster,vtt,hide) VALUES ('${title}','${code}','${release_date}','${video}','${static}','${preview}','${poster}','${vtt}',${hide})`
+            `INSERT INTO jav.jav (title,code,release_date,poster,hide) VALUES ('${title}','${code}','${release_date}','${poster}',${hide})`
         );
         const newRows = await db.query(
             `SELECT * FROM jav.jav where id = '${result.insertId}'`

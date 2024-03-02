@@ -76,7 +76,7 @@ router.patch('/updateJav', helper.isLoggedIn, async function (req, res, next) {
 /* Create Javs*/
 router.post('/newJav', helper.isLoggedIn, async function (req, res, next) {
   try {
-    res.json(await javs.newJav(req.body.title,req.body.code,req.body.release_date,req.body.video,req.body.static,req.body.preview,req.body.poster,req.body.vtt,req.body.hide,req.body.categories,req.body.idols));  
+    res.json(await javs.newJav(req.body.title,req.body.code,req.body.release_date,req.body.poster,req.body.hide,req.body.categories,req.body.idols));  
   } catch (error) {
     next(error)
   }
