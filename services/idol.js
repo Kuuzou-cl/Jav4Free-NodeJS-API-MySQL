@@ -4,7 +4,7 @@ const config = require('../config');
 
 async function getRandomByLimit(limit = 1) {
     const rows = await db.query(
-        `SELECT i.* FROM jav.idol i JOIN jav_idol ji on ji.idol_id = i.id GROUP by i.id order by RAND() LIMIT 0,${limit}`
+        `SELECT i.*, count(ji.idol_id) as quantity FROM jav.idol i JOIN jav_idol ji on ji.idol_id = i.id GROUP by i.id order by RAND() LIMIT 0,${limit}`
     );
     return{
         Response: helper.emptyOrRows(rows)
