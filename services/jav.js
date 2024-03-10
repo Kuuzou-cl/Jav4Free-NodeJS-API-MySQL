@@ -41,6 +41,9 @@ async function getJavByCode(code = 0) {
             `SELECT * from idol i join jav_idol ji on ji.idol_id = i.id WHERE ji.jav_id = (SELECT id FROM jav j where j.code = '${code}')`
         );
         rowsJav[0].idols = helper.emptyOrRows(rowsIdols);
+        const rowView = await db.query(
+            `INSERT INTO jav_view (jav_id) VALUES (${rowsJav[0].id})`
+        );
     }
 
     return {
