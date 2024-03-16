@@ -14,7 +14,7 @@ const config = {
   },
   cors: {
     server: [
-      { origin: "*", credentials: true }
+      { origin: "https://www.jav4free.watch/", credentials: true }
     ]
   },
   listPerPageJavs: 20,

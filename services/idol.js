@@ -15,7 +15,7 @@ async function getbypage(page = 1) {
     const offset = helper.getOffset(page, config.listPerPageIdols);
 
     const rows = await db.query(
-        `SELECT i.* FROM jav.idol i JOIN jav_idol ji on ji.idol_id = i.id GROUP by i.id order by i.name LIMIT ${offset},${config.listPerPageIdols}`
+        `SELECT i.*, count(ji.idol_id) as quantity FROM jav.idol i JOIN jav_idol ji on ji.idol_id = i.id GROUP by i.id order by i.name LIMIT ${offset},${config.listPerPageIdols}`
     );
     const maxRows = await db.query(
         `SELECT i.* FROM jav.idol i JOIN jav_idol ji on ji.idol_id = i.id GROUP by i.id`
