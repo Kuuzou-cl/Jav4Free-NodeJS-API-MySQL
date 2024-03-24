@@ -3,9 +3,9 @@ const helper = require('../helper');
 const config = require('../config');
 
 //v3 
-async function getJavByLatest(limit = 2) {
+async function getJavByLatest(limit = 2, order = 'release_date') {
     let rows = await db.query(
-        `select * from jav.jav j where j.hide = 0 and poster is not null and title is not null order by release_date desc limit 0,${limit}`
+        `select * from jav.jav j where j.hide = 0 and poster is not null and title is not null order by '${order}' desc limit 0,${limit}`
     );
 
     rows = helper.emptyOrRows(rows);
