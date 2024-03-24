@@ -6,7 +6,7 @@ const helper = require('../helper');
 /* GET Javs Latest jav Homepage*/
 router.get('/getlatest', async function(req, res, next) {
   try {
-    res.json(await javs.getJavByLatest(req.query.limit));
+    res.json(await javs.getJavByLatest(req.query.limit,req.query.order));
   } catch (err) {
     console.error(`Error while getting newest Javs `, err.message);
     next(err);
