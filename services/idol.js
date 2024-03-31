@@ -72,23 +72,18 @@ async function getAll() {
     }
 }
 
-//--------------------------------------------------------------------
-
-
-
-
-async function newIdolV2(name = 'error', image = 'error', hide = true) {
+async function newIdol(name = 'error', poster = 'error') {
     const rows = await db.query(
-        `SELECT * FROM Idol where name = '${name}'`
+        `SELECT * FROM idol where name = '${name}'`
     );
     const data = { Idols : helper.emptyOrRows(rows) };
 
     if (data.Idols.length == 0) {
         const result = await db.query(
-            `INSERT INTO Idol (name, image, hide) VALUES ('${name}','${image}',${hide})`
+            `INSERT INTO idol (name, poster) VALUES ('${name}','${poster}')`
         );    
         const newRows = await db.query(
-            `SELECT * FROM Idol where id = '${result.insertId}'`
+            `SELECT * FROM idol where id = '${result.insertId}'`
         );
         return {
             Idol : helper.emptyOrRows(newRows), meta: result
@@ -99,6 +94,8 @@ async function newIdolV2(name = 'error', image = 'error', hide = true) {
         }
     }    
 }
+
+//--------------------------------------------------------------------
 
 async function updateIdolV2(id= 0, name = 'error', image = 'error') {
     const rows = await db.query(
@@ -133,7 +130,7 @@ module.exports = {
     getbypage,
     getJavByIdol,
     getAll,
+    newIdol,
     //
-    newIdolV2,
     updateIdolV2
 }
