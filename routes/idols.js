@@ -40,7 +40,7 @@ router.get('/getIdols', async function(req, res, next) {
   }
 });
 
-router.post('/newIdolv', helper.isLoggedIn, async function (req, res, next) {
+router.post('/newIdol', helper.isLoggedIn, async function (req, res, next) {
   try {
     res.json(await idols.newIdol(req.body.name,req.body.poster));  
   } catch (error) {
