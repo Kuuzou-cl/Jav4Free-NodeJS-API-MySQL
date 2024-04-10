@@ -10,7 +10,8 @@ async function login(email, password) {
     if (data[0]) {
         const token = jwt.sign({
             username: data[0].email,
-            userId: data[0].id
+            userId: data[0].id,
+            userAdmin: data[0].admin
         },
             'syny', {
             expiresIn: '7d'
@@ -21,6 +22,36 @@ async function login(email, password) {
         }
     } else {
         return { error: 'error' };
+    }
+}
+
+async function register(email, password) {
+    const rows = await db.query(
+        `SELECT * FROM jav.user WHERE email = '${email}'`
+    );
+    const data = helper.emptyOrRows(rows);
+    if (!data[0]) {
+        const rowsRegister = await db.query(        
+            `INSERT INTO jav.user (email, pswd) VALUES('${email}', AES_ENCRYPT('${password}', 'syny'))`
+        );
+        const rowsUser = await db.query(
+            `SELECT * FROM jav.user WHERE email = '${email}'`
+        );
+        const dataUser = helper.emptyOrRows(rowsUser);
+        const token = jwt.sign({
+            username: dataUser[0].email,
+            userId: dataUser[0].id,
+            userAdmin: dataUser[0].admin
+        },
+            'syny', {
+            expiresIn: '7d'
+        })
+        return {
+            user: dataUser[0].email,
+            token: token
+        }
+    } else {
+        return { error: 'Email already exist' };
     }
 }
 
@@ -41,5 +72,6 @@ async function tokenAlive(email, token) {
 
 module.exports = {
     login,
+    register,
     tokenAlive
 }
