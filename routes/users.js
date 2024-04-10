@@ -13,6 +13,17 @@ router.post('/login', async function (req, res, next) {
   }
 });
 
+/* Register */
+router.post('/register', async function (req, res, next) {
+  try {
+    res.json(await users.register(req.body.email, req.body.password));
+  } catch (err) {
+    console.error(`Error while login`, err.message);
+    next(err);
+  }
+});
+
+/* Validate Token */
 router.post('/currentAlive', async function (req, res, next) {
   try {
     res.json(await users.tokenAlive(req.body.email, req.headers.authorization));  
