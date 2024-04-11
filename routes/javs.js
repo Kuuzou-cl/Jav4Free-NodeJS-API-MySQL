@@ -73,6 +73,15 @@ router.get('/getjavbyid', async function(req, res, next) {
   }
 });
 
+/* Get Jav History */
+router.post('/historyJav', async function (req, res, next) {
+  try {
+    res.json(await javs.getHistoryJav(req.body.history, req.body.page));  
+  } catch (error) {
+    next(error)
+  }
+});
+
 /* Patch Javs by id*/
 router.patch('/updateJav', helper.isLoggedIn, async function (req, res, next) {
   try {

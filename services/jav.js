@@ -97,6 +97,38 @@ async function getJavByPage(page = 1) {
     }
 }
 
+async function getHistoryJav(history = [], page = 1) {
+    const offset = helper.getOffset(page, config.listPerPageJavs);
+
+    let listId = "";
+    for (let index = 0; index < history.length; index++) {
+        if (index == history.length - 1 ) {
+            listId = listId + history[index].toString();
+        }else{
+            listId = listId + history[index].toString() + ",";
+        }        
+    }
+
+    const rows = await db.query(
+        `SELECT * FROM jav.jav j WHERE j.hide = 0 and j.id in (${listId}) LIMIT ${offset},${config.listPerPageJavs}`
+    );
+
+    const maxRows = await db.query(
+        `SELECT * FROM jav.jav j WHERE j.hide = 0 and j.id in (${listId})`
+    );
+
+    const pagesData = helper.getCountPages(page, config.listPerPageJavs, maxRows.length);
+
+    return {
+        Response: {
+            Javs: helper.emptyOrRows(rows),
+            page: page,
+            nextPage: pagesData.nextPage,
+            lastPage: pagesData.lastPage
+        }
+    }
+}
+
 async function getJavByViews(page = 1) {
     const offset = helper.getOffset(page, config.listPerPageJavs);
 
@@ -288,6 +320,7 @@ module.exports = {
     getJavByViews,
     getAllJavByPage,
     getJavById,
+    getHistoryJav,
     updateJav,
     newJav,
     generateUploadUrl
