@@ -109,4 +109,22 @@ router.post('/generateUploadUrl', helper.isLoggedIn, async function (req, res, n
   }
 });
 
+/* New Favorite Javs*/
+router.post('/addFavorite', helper.isLoggedIn, async function (req, res, next) {
+  try {
+    res.json(await javs.addFavorite(req.body.id,req.headers.authorization));  
+  } catch (error) {
+    next(error)
+  }
+});
+
+/* Delete Favorite Javs*/
+router.post('/deleteFavorite', helper.isLoggedIn, async function (req, res, next) {
+  try {
+    res.json(await javs.deleteFavorite(req.body.id,req.headers.authorization));  
+  } catch (error) {
+    next(error)
+  }
+});
+
 module.exports = router;

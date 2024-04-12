@@ -48,6 +48,24 @@ router.post('/newIdol', helper.isLoggedIn, async function (req, res, next) {
   }
 });
 
+/* New Favorite Javs*/
+router.post('/addFavorite', helper.isLoggedIn, async function (req, res, next) {
+  try {
+    res.json(await idols.addFavorite(req.body.id,req.headers.authorization));  
+  } catch (error) {
+    next(error)
+  }
+});
+
+/* Delete Favorite Javs*/
+router.post('/deleteFavorite', helper.isLoggedIn, async function (req, res, next) {
+  try {
+    res.json(await idols.deleteFavorite(req.body.id,req.headers.authorization));  
+  } catch (error) {
+    next(error)
+  }
+});
+
 
 /* New petitions V2 APP NUXT3 ---------------------------------------------------------------------------------------------------- */
 

@@ -1,6 +1,7 @@
 const db = require('./db');
 const helper = require('../helper');
 const config = require('../config');
+const jwt = require('jsonwebtoken');
 
 async function getRandomByLimit(limit = 1) {
     const rows = await db.query(
@@ -95,6 +96,32 @@ async function newIdol(name = 'error', poster = 'error') {
     }    
 }
 
+async function addFavorite(id=1,token){
+    try {
+        const tokenSplitted = token.split(' ')[1];
+        var decoded = jwt.verify(tokenSplitted, 'syny');
+        const result = await db.query(
+            `INSERT INTO jav.user_idol_favorite (user_id,idol_id) VALUES (${decoded.userId},${id})`
+        );
+        return { Response: "Added to favorites Idols" };
+    } catch (error) {
+        return { alive: false, Response: "Already added or Session Expired!" };
+    }
+}
+
+async function deleteFavorite(id=1,token){
+    try {
+        const tokenSplitted = token.split(' ')[1];
+        var decoded = jwt.verify(tokenSplitted, 'syny');
+        const result = await db.query(
+            `DELETE FROM jav.user_idol_favorite WHERE user_id = ${decoded.userId} and idol_id =${id}`
+        );
+        return { Response: "Delete from favorites Idols" };
+    } catch (error) {
+        return { alive: false, Response: "Already deleted or Session Expired!" };
+    }
+}
+
 //--------------------------------------------------------------------
 
 async function updateIdolV2(id= 0, name = 'error', image = 'error') {
@@ -131,6 +158,8 @@ module.exports = {
     getJavByIdol,
     getAll,
     newIdol,
+    addFavorite,
+    deleteFavorite,
     //
     updateIdolV2
 }

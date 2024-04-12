@@ -1,6 +1,7 @@
 const db = require('./db');
 const helper = require('../helper');
 const config = require('../config');
+const jwt = require('jsonwebtoken');
 
 //v3 
 async function getJavByLatest(limit = 2, order = 'release_date') {
@@ -322,6 +323,32 @@ async function generateUploadUrl() {
     }
 }
 
+async function addFavorite(id=1,token){
+    try {
+        const tokenSplitted = token.split(' ')[1];
+        var decoded = jwt.verify(tokenSplitted, 'syny');
+        const result = await db.query(
+            `INSERT INTO jav.user_jav_favorite (user_id,jav_id) VALUES (${decoded.userId},${id})`
+        );
+        return { Response: "Added to favorites JAVs" };
+    } catch (error) {
+        return { alive: false, Response: "Already added or Session Expired!" };
+    }
+}
+
+async function deleteFavorite(id=1,token){
+    try {
+        const tokenSplitted = token.split(' ')[1];
+        var decoded = jwt.verify(tokenSplitted, 'syny');
+        const result = await db.query(
+            `DELETE FROM jav.user_jav_favorite WHERE user_id = ${decoded.userId} and jav_id =${id}`
+        );
+        return { Response: "Delete from favorites JAVs" };
+    } catch (error) {
+        return { alive: false, Response: "Already deleted or Session Expired!" };
+    }
+}
+
 
 module.exports = {
     getJavByLatest,
@@ -334,5 +361,7 @@ module.exports = {
     getHistoryJav,
     updateJav,
     newJav,
-    generateUploadUrl
+    generateUploadUrl,
+    addFavorite,
+    deleteFavorite
 }
