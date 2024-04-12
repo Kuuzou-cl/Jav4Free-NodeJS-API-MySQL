@@ -349,6 +349,36 @@ async function deleteFavorite(id=1,token){
     }
 }
 
+async function addFavorite(id=1,token){
+    try {
+        const tokenSplitted = token.split(' ')[1];
+        var decoded = jwt.verify(tokenSplitted, 'syny');
+        const result = await db.query(
+            `INSERT INTO jav.user_jav_favorite (user_id,jav_id) VALUES (${decoded.userId},${id})`
+        );
+        return { Response: "Added to favorites JAVs" };
+    } catch (error) {
+        return { alive: false, Response: "Already added or Session Expired!" };
+    }
+}
+
+async function checkFavorite(id=1,token){
+    try {
+        const tokenSplitted = token.split(' ')[1];
+        var decoded = jwt.verify(tokenSplitted, 'syny');
+        const rows = await db.query(
+            `SELECT * FROM jav.user_jav_favorite WHERE user_id = ${decoded.userId} and jav_id =${id}`
+        );
+        if (helper.emptyOrRows(rows).length == 0) {
+            return { Response: false }
+        }else{
+            return { Response: true }
+        }
+    } catch (error) {
+        return { alive: false, Response: "Session Expired!" };
+    }
+}
+
 
 module.exports = {
     getJavByLatest,
@@ -363,5 +393,6 @@ module.exports = {
     newJav,
     generateUploadUrl,
     addFavorite,
-    deleteFavorite
+    deleteFavorite,
+    checkFavorite
 }
