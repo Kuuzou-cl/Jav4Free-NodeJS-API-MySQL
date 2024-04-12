@@ -113,6 +113,17 @@ async function getHistoryJav(history = [], page = 1) {
         `SELECT * FROM jav.jav j WHERE j.hide = 0 and j.id in (${listId}) LIMIT ${offset},${config.listPerPageJavs}`
     );
 
+    let arrayOrder = [];
+
+    for (let indexA = 0; indexA < history.length; indexA++) {
+        for (let indexB = 0; indexB < rows.length; indexB++) {
+            if (history[indexA] == rows[indexB].id) {
+                arrayOrder.push(rows[indexB]);
+                break;
+            }            
+        }        
+    }
+
     const maxRows = await db.query(
         `SELECT * FROM jav.jav j WHERE j.hide = 0 and j.id in (${listId})`
     );
@@ -121,7 +132,7 @@ async function getHistoryJav(history = [], page = 1) {
 
     return {
         Response: {
-            Javs: helper.emptyOrRows(rows),
+            Javs: helper.emptyOrRows(arrayOrder),
             page: page,
             nextPage: pagesData.nextPage,
             lastPage: pagesData.lastPage
