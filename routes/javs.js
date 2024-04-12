@@ -129,7 +129,7 @@ router.post('/deleteFavorite', helper.isLoggedIn, async function (req, res, next
 
 /* GET Javs by code*/
 /* Delete Favorite Javs*/
-router.get('/checkFavorite', helper.isLoggedIn, async function (req, res, next) {
+router.post('/checkFavorite', helper.isLoggedIn, async function (req, res, next) {
   try {
     res.json(await javs.checkFavorite(req.body.id,req.headers.authorization));  
   } catch (error) {
