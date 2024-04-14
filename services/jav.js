@@ -103,11 +103,11 @@ async function getHistoryJav(history = [], page = 1) {
 
     let listId = "";
     for (let index = 0; index < history.length; index++) {
-        if (index == history.length - 1 ) {
+        if (index == history.length - 1) {
             listId = listId + history[index].toString();
-        }else{
+        } else {
             listId = listId + history[index].toString() + ",";
-        }        
+        }
     }
 
     const rows = await db.query(
@@ -121,8 +121,8 @@ async function getHistoryJav(history = [], page = 1) {
             if (history[indexA] == rows[indexB].id) {
                 arrayOrder.push(rows[indexB]);
                 break;
-            }            
-        }        
+            }
+        }
     }
 
     const maxRows = await db.query(
@@ -323,7 +323,7 @@ async function generateUploadUrl() {
     }
 }
 
-async function addFavorite(id=1,token){
+async function addFavorite(id = 1, token) {
     try {
         const tokenSplitted = token.split(' ')[1];
         var decoded = jwt.verify(tokenSplitted, 'syny');
@@ -336,7 +336,7 @@ async function addFavorite(id=1,token){
     }
 }
 
-async function deleteFavorite(id=1,token){
+async function deleteFavorite(id = 1, token) {
     try {
         const tokenSplitted = token.split(' ')[1];
         var decoded = jwt.verify(tokenSplitted, 'syny');
@@ -349,20 +349,7 @@ async function deleteFavorite(id=1,token){
     }
 }
 
-async function addFavorite(id=1,token){
-    try {
-        const tokenSplitted = token.split(' ')[1];
-        var decoded = jwt.verify(tokenSplitted, 'syny');
-        const result = await db.query(
-            `INSERT INTO jav.user_jav_favorite (user_id,jav_id) VALUES (${decoded.userId},${id})`
-        );
-        return { Response: "Added to favorites JAVs" };
-    } catch (error) {
-        return { alive: false, Response: "Already added or Session Expired!" };
-    }
-}
-
-async function checkFavorite(id=1,token){
+async function checkFavorite(id = 1, token) {
     try {
         const tokenSplitted = token.split(' ')[1];
         var decoded = jwt.verify(tokenSplitted, 'syny');
@@ -371,9 +358,38 @@ async function checkFavorite(id=1,token){
         );
         if (helper.emptyOrRows(rows).length == 0) {
             return { Response: false }
-        }else{
+        } else {
             return { Response: true }
         }
+    } catch (error) {
+        return { alive: false, Response: "Session Expired!" };
+    }
+}
+
+async function getFavoriteJavByPage(order = "", page = 1, token) {
+    const offset = helper.getOffset(page, config.listPerPageJavs);
+
+    try {
+        const tokenSplitted = token.split(' ')[1];
+        var decoded = jwt.verify(tokenSplitted, 'syny');
+        const rows = await db.query(
+            `SELECT * FROM jav.user_jav_favorite WHERE user_id = ${decoded.userId} order by ${order} LIMIT ${offset},${config.listPerPageJavs}`
+        );
+        const maxRows = await db.query(
+            `SELECT * FROM jav.user_jav_favorite WHERE user_id = ${decoded.userId}`
+        );
+
+        const pagesData = helper.getCountPages(page, config.listPerPageJavs, maxRows.length);
+
+        return {
+            Response: {
+                Javs: helper.emptyOrRows(rows),
+                page: page,
+                nextPage: pagesData.nextPage,
+                lastPage: pagesData.lastPage
+            }
+        }
+
     } catch (error) {
         return { alive: false, Response: "Session Expired!" };
     }
@@ -394,5 +410,6 @@ module.exports = {
     generateUploadUrl,
     addFavorite,
     deleteFavorite,
-    checkFavorite
+    checkFavorite,
+    getFavoriteJavByPage
 }

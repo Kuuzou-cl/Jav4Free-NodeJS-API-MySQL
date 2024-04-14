@@ -128,12 +128,21 @@ router.post('/deleteFavorite', helper.isLoggedIn, async function (req, res, next
 });
 
 /* GET Javs by code*/
-/* Delete Favorite Javs*/
 router.post('/checkFavorite', helper.isLoggedIn, async function (req, res, next) {
   try {
     res.json(await javs.checkFavorite(req.body.id,req.headers.authorization));  
   } catch (error) {
     next(error)
+  }
+});
+
+/* GET all favorite Javs by page*/
+router.post('/getfavoritebypage', helper.isLoggedIn, async function(req, res, next) {
+  try {
+    res.json(await javs.getFavoriteJavByPage(req.body.order,req.body.page,req.headers.authorization));
+  } catch (err) {
+    console.error(`Error while getting newest Javs `, err.message);
+    next(err);
   }
 });
 
