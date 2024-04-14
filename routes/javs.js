@@ -139,7 +139,7 @@ router.post('/checkFavorite', helper.isLoggedIn, async function (req, res, next)
 /* GET all favorite Javs by page*/
 router.post('/getfavoritebypage', helper.isLoggedIn, async function(req, res, next) {
   try {
-    res.json(await javs.getFavoriteJavByPage(req.body.order,req.body.page,req.headers.authorization));
+    res.json(await javs.getFavoriteJavByPage(req.body.param,req.body.order,req.body.page,req.headers.authorization));
   } catch (err) {
     console.error(`Error while getting newest Javs `, err.message);
     next(err);
