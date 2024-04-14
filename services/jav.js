@@ -373,7 +373,7 @@ async function getFavoriteJavByPage(param= "release_date", order = "desc", page 
         const tokenSplitted = token.split(' ')[1];
         var decoded = jwt.verify(tokenSplitted, 'syny');
         const rows = await db.query(
-            `SELECT * FROM jav.user_jav_favorite WHERE user_id = ${decoded.userId} order by ${param} ${param} LIMIT ${offset},${config.listPerPageJavs}`
+            `SELECT * FROM jav.user_jav_favorite WHERE user_id = ${decoded.userId} order by ${param} ${order} LIMIT ${offset},${config.listPerPageJavs}`
         );
         const maxRows = await db.query(
             `SELECT * FROM jav.user_jav_favorite WHERE user_id = ${decoded.userId}`
