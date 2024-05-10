@@ -36,7 +36,7 @@ router.get('/getrandom', async function(req, res, next) {
 /* GET Javs by order and page*/
 router.get('/getjavbypage', async function(req, res, next) {
   try {
-    res.json(await javs.getJavByPage(req.query.page));
+    res.json(await javs.getJavByPage(req.query.page, req.query.order));
   } catch (err) {
     console.error(`Error while getting newest Javs `, err.message);
     next(err);
