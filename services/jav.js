@@ -75,11 +75,12 @@ async function getJavByRand(limit = 2) {
     }
 }
 
-async function getJavByPage(page = 1, order = 'release_date') {
+async function getJavByPage(page = 1, order = 'release_date', order2 = 'desc') {
     const offset = helper.getOffset(page, config.listPerPageJavs);
 
+
     const rows = await db.query(
-        `SELECT * FROM jav.jav j WHERE j.hide = 0 order by ${order} desc LIMIT ${offset},${config.listPerPageJavs}`
+        `SELECT * FROM jav.jav j WHERE j.hide = 0 order by ${order} ${order2} LIMIT ${offset},${config.listPerPageJavs}`
     );
 
     const maxRows = await db.query(
